@@ -1,0 +1,82 @@
+.official-announcement-section {
+    margin: 40px 0px 60px 0px ;
+    font-family: Arial, sans-serif;
+  }
+  
+  .announcement-header {
+    position: relative;
+    margin-bottom: 35px;
+  }
+  
+  .announcement-title {
+    background-color: rgb(2, 3, 71);
+    color: white;
+    display: inline-block;
+    padding: 10px 20px;
+    font-weight: bold;
+    font-size: 18px;
+    position: relative;
+    margin: 0;
+    clip-path: polygon(0 0, 100% 0, 90% 100%, 0 100%);
+    min-width: 200px;
+  }
+  
+  .announcement-title::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    right: -20px;
+    width: 0;
+    height: 0;
+    border-style: solid;
+    border-width: 0 0 48px 20px;
+    border-color: transparent transparent #c00 transparent;
+  }
+  
+  .date-filter {
+    display: flex;
+    align-items: center;
+    margin: 40px 0;
+    gap: 15px;
+    font-size: 1.3rem;
+  }
+  
+  .date-filter label {
+    font-weight: 500;
+    margin-right: 10px;
+    font-size: 1.3rem;
+  }
+  
+  .date-input {
+    padding: 6px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    width: 150px;
+  }
+  
+  .announcement-divider {
+    height: 4px;
+    background-color: rgba(11, 5, 46, 0.877);
+    border-radius: 4px;
+    margin: 35px 0;
+    width: 100%;
+  }
+  
+  .announcement-message {
+    margin-top: 15px;
+    color: #333;
+    font-size: 1.3rem;
+  }
+  
+  /* Responsive styles */
+  @media (max-width: 768px) {
+    .date-filter {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  
+    .date-input {
+      width: 100%;
+    }
+  }
+  

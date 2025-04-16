@@ -1,0 +1,38 @@
+
+services:
+  db:
+    image: mysql:latest  # latest yerine belirli bir sürüm
+    container_name: mysql_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: ayyildizajans
+      MYSQL_USER: root
+      MYSQL_PASSWORD: secret  # Eksik olan şifre eklendi
+    ports:
+      - "3306:3306"
+    volumes:
+      - db_data:/var/lib/mysql
+    networks:
+      - laravel_network
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    restart: always
+    environment:
+      - PMA_HOST=db  # Sadece gerekli değişken
+    ports:
+      - "9090:80"
+    networks:
+      - laravel_network
+    depends_on:
+      - db
+
+networks:
+  laravel_network:
+
+volumes:
+  db_data:
+
+  

@@ -1,0 +1,435 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  min-width: 100%;
+  background-color: #d5d5d5b0;
+}
+
+/* Global Stiller */
+:root {
+  --primary-color: #00264d;
+  --secondary-color: #102131;
+  --text-color: #ffffff;
+  --accent-color: #0c0f45;
+  --background-light: #e9e6e6;
+  --background-dark: #1a1a1a;
+}
+
+body {
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* Header Stilleri */
+.header-container {
+  background-color: var(--primary-color);
+  padding: 10px 0;
+  color: var(--text-color);
+}
+
+.header-logo {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  margin-right: 15px;
+}
+
+/* Diğer header stilleri... */
+
+/* Navigation Stilleri */
+.custom-navbar {
+  background-color: var(--background-light);
+  padding: 0.5rem 1rem;
+}
+
+.custom-navbar.scrolled {
+  background-color: #a7a5a5;
+}
+
+/* Diğer navbar stilleri... */
+
+/* Footer Stilleri */
+.footer-main {
+  width: 100%;
+  background-color: var(--background-dark);
+  color: var(--text-color);
+}
+
+.footer-top {
+  padding: 40px 20px;
+  background-color: #222;
+}
+
+/* Diğer footer stilleri... */
+
+/* Responsive Stiller */
+@media (max-width: 991px) {
+  /* Tablet için stiller */
+}
+
+@media (max-width: 767px) {
+  /* Mobil için stiller */
+}
+
+@media (max-width: 575px) {
+  /* Küçük mobil cihazlar için stiller */
+}
+
+/* Reklam Panel için style*/
+
+.ad-panel {
+  height: 600px;
+  width: 100%; /* Bootstrap Grid ile hızalanacak*/
+  max-width: 180px; /*Reklamın maksimum genişliği*/
+  margin: 10px auto; /* altan üsten 10px ve ona göre sağ soldan boşlukta ayarlanacak*/
+  text-align: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.ad-panel img {
+  /*img panel içine ayarlanıyor*/
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+}
+
+/* Reklam ve İçerik Düzeni */
+.content-with-ads {
+  display: flex;
+  width: 100%;
+}
+
+.ad-container {
+  width: 180px; /* Reklam genişliği */
+  position: sticky;
+  top: 100px;
+  height: fit-content;
+}
+
+.ad-container.left {
+  margin-right: 15px;
+}
+
+.ad-container.right {
+  margin-left: 15px;
+}
+
+main {
+  flex: 1;
+  min-width: 0; /* Taşmaları önler */
+}
+
+/* Mobil görünümde reklamları gizle */
+@media (max-width: 768px) {
+  .ad-container {
+    display: none;
+  }
+
+  main {
+    width: 100%;
+  }
+}
+
+.currency-bar {
+  background: #f8f9fa;
+  padding: 10px 0;
+  border-bottom: 2px solid #ddd;
+}
+
+.currency-scroll {  
+  display: flex;
+  white-space: nowrap;
+  overflow-x: auto;
+  padding-bottom: 5px;
+}
+
+.currency-item {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  padding: 8px 15px;
+  border-right: 1px solid #ddd;
+}
+
+.currency-item:last-child {
+  border-right: none;
+}
+
+.up {
+  color: green;
+  font-weight: bold;
+}
+
+.down {
+  color: red;
+  font-weight: bold;
+}
+
+.manset-link {
+  font-weight: bold;
+  color: #007bff;
+  text-decoration: none;
+}
+
+.manset-link:hover {
+  text-decoration: underline;
+}
+
+/* Add these styles to your App.css file */
+.news-list {
+  border-radius: 7px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s;
+  height: 100%;
+}
+
+.news-list:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.news-list-item {
+  display: block;
+  color: #333;
+  text-decoration: none;
+}
+
+.news-list-item:hover {
+  text-decoration: none;
+  color: #000;
+}
+
+.carousel-main {
+  box-shadow: 0 4px 8px rgba(23, 23, 23, 0.5);
+  border-radius: 7px;
+  overflow: hidden;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .carousel-main img {
+    height: 400px !important;
+  }
+}
+
+@media (max-width: 767px) {
+  .carousel-main img {
+    height: 350px !important;
+  }
+
+  .news-list {
+    margin-bottom: 1rem;
+  }
+}
+
+
+/* News Grid Section Styles */
+.news-grid-section {
+  margin-bottom: 30px;
+}
+
+.news-grid-item {
+  background-color: #fff;
+  border-radius: 4px;
+  overflow: hidden;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  height: 100%;
+  transition: transform 0.2s;
+}
+
+.news-grid-item:hover {
+  transform: translateY(-5px);
+}
+
+.news-grid-img img {
+  width: 100%;
+  height: 150px;
+  object-fit: cover;
+}
+
+.news-grid-content {
+  padding: 10px;
+}
+
+.news-grid-content h4 {
+  font-size: 0.9rem;
+  margin: 0 0 8px 0;
+  line-height: 1.4;
+  font-weight: bold;
+  color: #333;
+}
+
+.news-grid-content .news-summary {
+  font-size: 0.8rem;
+  margin: 0;
+  line-height: 1.3;
+  color: #666;
+}
+
+/* Responsive adjustments */
+@media (max-width: 767px) {
+  .news-grid-img img {
+    height: 120px;
+  }
+}
+
+.news-list {
+  border: 1px solid #ddd;
+  margin-bottom: 10px;
+}
+
+.news-list-item {
+  display: block;
+  color: #333;
+}
+
+.news-list-item:hover {
+  text-decoration: none;
+  background-color: #f5f5f5;
+}
+
+.currency-container {
+  padding: 15px 20px;
+  background-color: #f9fafc;
+  border-bottom: 1px solid #d1d5db;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+}
+
+.currency-row {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.currency-card {
+  flex: 1;
+  min-width: 180px;
+  padding: 15px;
+  border-radius: 12px;
+  background-color: #ffffff;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.currency-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+}
+
+.currency-title {
+  color: #1e3a8a;
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.currency-value-container {
+  display: flex;
+  align-items: baseline;
+  margin-bottom: 6px;
+}
+
+.currency-value {
+  font-size: 20px;
+  font-weight: 700;
+  color: #111827;
+  margin-right: 8px;
+}
+
+.currency-change {
+  font-size: 13px;
+}
+
+.up {
+  color: #10b981;
+}
+
+.down {
+  color: #ef4444;
+}
+
+.sparkline-container {
+  position: relative;
+  cursor: pointer;
+  background-color: #f3f4f6;
+  border-radius: 8px;
+  padding: 2px 4px;
+  height: 45px;
+}
+
+.sparkline {
+  width: 100%;
+  height: 100%;
+}
+
+.currency-tooltip {
+  position: absolute;
+  background-color: #ffffff;
+  border: 1px solid #e5e7eb;
+  border-radius: 6px;
+  padding: 10px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+  pointer-events: none;
+  min-width: 130px;
+  text-align: center;
+}
+
+.tooltip-time {
+  font-size: 12px;
+  color: #6b7280;
+  margin-bottom: 5px;
+}
+
+.tooltip-value {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 2px;
+}
+
+.tooltip-currency {
+  font-size: 14px;
+  color: #2563eb;
+}
+
+.links-row {
+  margin-top: 12px;
+}
+
+.manset-link {
+  color: #2563eb !important;
+  text-decoration: none !important;
+  font-size: 14px;
+}
+
+.manset-link:hover {
+  text-decoration: underline !important;
+}
+
+.loading,
+.error {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
+}
+
+.error {
+  color: #ef4444;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .currency-row {
+    flex-direction: column;
+  }
+
+  .currency-card {
+    min-width: 100%;
+    padding: 12px;
+    margin-bottom: 10px;
+  }
+}

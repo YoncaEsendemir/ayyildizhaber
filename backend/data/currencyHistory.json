@@ -1,0 +1,342 @@
+[
+  {
+    "timestamp": "2025-04-14T20:19:42.006Z",
+    "money": {
+      "USD": {
+        "buying": 38.0212,
+        "selling": 38.0433,
+        "change": 0.01
+      },
+      "EUR": {
+        "buying": 43.199,
+        "selling": 43.2597,
+        "change": -0.1
+      },
+      "GBP": {
+        "buying": 50.1657,
+        "selling": 50.2373,
+        "change": 0.68
+      }
+    },
+    "gold": {
+      "GRA": {
+        "buying": 3921.96,
+        "selling": 3928.31,
+        "change": -0.78
+      }
+    },
+    "crypto": {
+      "BTC": {
+        "buying": "-",
+        "selling": 3225829,
+        "change": 0.49
+      }
+    }
+  },
+  {
+    "timestamp": "2025-04-14T20:19:40.350Z",
+    "money": {
+      "USD": {
+        "buying": 38.0212,
+        "selling": 38.0433,
+        "change": 0.01
+      },
+      "EUR": {
+        "buying": 43.199,
+        "selling": 43.2597,
+        "change": -0.1
+      },
+      "GBP": {
+        "buying": 50.1657,
+        "selling": 50.2373,
+        "change": 0.68
+      }
+    },
+    "gold": {
+      "GRA": {
+        "buying": 3921.96,
+        "selling": 3928.31,
+        "change": -0.78
+      }
+    },
+    "crypto": {
+      "BTC": {
+        "buying": "-",
+        "selling": 3225829,
+        "change": 0.49
+      }
+    }
+  },
+  {
+    "timestamp": "2025-04-14T20:19:38.795Z",
+    "money": {
+      "USD": {
+        "buying": 38.0212,
+        "selling": 38.0433,
+        "change": 0.01
+      },
+      "EUR": {
+        "buying": 43.199,
+        "selling": 43.2597,
+        "change": -0.1
+      },
+      "GBP": {
+        "buying": 50.1657,
+        "selling": 50.2373,
+        "change": 0.68
+      }
+    },
+    "gold": {
+      "GRA": {
+        "buying": 3921.96,
+        "selling": 3928.31,
+        "change": -0.78
+      }
+    },
+    "crypto": {
+      "BTC": {
+        "buying": "-",
+        "selling": 3225829,
+        "change": 0.49
+      }
+    }
+  },
+  {
+    "timestamp": "2025-04-14T20:19:37.270Z",
+    "money": {
+      "USD": {
+        "buying": 38.0212,
+        "selling": 38.0433,
+        "change": 0.01
+      },
+      "EUR": {
+        "buying": 43.199,
+        "selling": 43.2597,
+        "change": -0.1
+      },
+      "GBP": {
+        "buying": 50.1657,
+        "selling": 50.2373,
+        "change": 0.68
+      }
+    },
+    "gold": {
+      "GRA": {
+        "buying": 3921.96,
+        "selling": 3928.31,
+        "change": -0.78
+      }
+    },
+    "crypto": {
+      "BTC": {
+        "buying": "-",
+        "selling": 3225829,
+        "change": 0.49
+      }
+    }
+  },
+  {
+    "timestamp": "2025-04-14T20:19:35.649Z",
+    "money": {
+      "USD": {
+        "buying": 38.0212,
+        "selling": 38.0433,
+        "change": 0.01
+      },
+      "EUR": {
+        "buying": 43.199,
+        "selling": 43.2597,
+        "change": -0.1
+      },
+      "GBP": {
+        "buying": 50.1657,
+        "selling": 50.2373,
+        "change": 0.68
+      }
+    },
+    "gold": {
+      "GRA": {
+        "buying": 3921.96,
+        "selling": 3928.31,
+        "change": -0.78
+      }
+    },
+    "crypto": {
+      "BTC": {
+        "buying": "-",
+        "selling": 3225829,
+        "change": 0.49
+      }
+    }
+  },
+  {
+    "timestamp": "2025-04-14T20:19:34.042Z",
+    "money": {
+      "USD": {
+        "buying": 38.0212,
+        "selling": 38.0433,
+        "change": 0.01
+      },
+      "EUR": {
+        "buying": 43.199,
+        "selling": 43.2597,
+        "change": -0.1
+      },
+      "GBP": {
+        "buying": 50.1657,
+        "selling": 50.2373,
+        "change": 0.68
+      }
+    },
+    "gold": {
+      "GRA": {
+        "buying": 3921.96,
+        "selling": 3928.31,
+        "change": -0.78
+      }
+    },
+    "crypto": {
+      "BTC": {
+        "buying": "-",
+        "selling": 3225829,
+        "change": 0.49
+      }
+    }
+  },
+  {
+    "timestamp": "2025-04-14T20:19:32.490Z",
+    "money": {
+      "USD": {
+        "buying": 38.0212,
+        "selling": 38.0433,
+        "change": 0.01
+      },
+      "EUR": {
+        "buying": 43.199,
+        "selling": 43.2597,
+        "change": -0.1
+      },
+      "GBP": {
+        "buying": 50.1657,
+        "selling": 50.2373,
+        "change": 0.68
+      }
+    },
+    "gold": {
+      "GRA": {
+        "buying": 3921.96,
+        "selling": 3928.31,
+        "change": -0.78
+      }
+    },
+    "crypto": {
+      "BTC": {
+        "buying": "-",
+        "selling": 3225829,
+        "change": 0.49
+      }
+    }
+  },
+  {
+    "timestamp": "2025-04-14T20:19:30.788Z",
+    "money": {
+      "USD": {
+        "buying": 38.0212,
+        "selling": 38.0433,
+        "change": 0.01
+      },
+      "EUR": {
+        "buying": 43.199,
+        "selling": 43.2597,
+        "change": -0.1
+      },
+      "GBP": {
+        "buying": 50.1657,
+        "selling": 50.2373,
+        "change": 0.68
+      }
+    },
+    "gold": {
+      "GRA": {
+        "buying": 3921.96,
+        "selling": 3928.31,
+        "change": -0.78
+      }
+    },
+    "crypto": {
+      "BTC": {
+        "buying": "-",
+        "selling": 3225829,
+        "change": 0.49
+      }
+    }
+  },
+  {
+    "timestamp": "2025-04-14T20:19:29.220Z",
+    "money": {
+      "USD": {
+        "buying": 38.0212,
+        "selling": 38.0433,
+        "change": 0.01
+      },
+      "EUR": {
+        "buying": 43.199,
+        "selling": 43.2597,
+        "change": -0.1
+      },
+      "GBP": {
+        "buying": 50.1657,
+        "selling": 50.2373,
+        "change": 0.68
+      }
+    },
+    "gold": {
+      "GRA": {
+        "buying": 3921.96,
+        "selling": 3928.31,
+        "change": -0.78
+      }
+    },
+    "crypto": {
+      "BTC": {
+        "buying": "-",
+        "selling": 3225829,
+        "change": 0.49
+      }
+    }
+  },
+  {
+    "timestamp": "2025-04-14T20:19:27.478Z",
+    "money": {
+      "USD": {
+        "buying": 38.0212,
+        "selling": 38.0433,
+        "change": 0.01
+      },
+      "EUR": {
+        "buying": 43.199,
+        "selling": 43.2597,
+        "change": -0.1
+      },
+      "GBP": {
+        "buying": 50.1657,
+        "selling": 50.2373,
+        "change": 0.68
+      }
+    },
+    "gold": {
+      "GRA": {
+        "buying": 3921.96,
+        "selling": 3928.31,
+        "change": -0.78
+      }
+    },
+    "crypto": {
+      "BTC": {
+        "buying": "-",
+        "selling": 3225829,
+        "change": 0.49
+      }
+    }
+  }
+]

@@ -1,0 +1,25 @@
+/* Carousel sayı göstergeleri için stil */
+.carousel-indicators-numbers {
+    overflow-x: auto;
+    white-space: nowrap;
+    scrollbar-width: thin;
+    padding-bottom: 5px;
+  }
+  
+  .carousel-indicators-numbers::-webkit-scrollbar {
+    height: 5px;
+  }
+  
+  .carousel-indicators-numbers::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 5px;
+  }
+  
+  .carousel-indicators-numbers button {
+    transition: all 0.3s ease;
+  }
+  
+  .carousel-indicators-numbers button.btn-danger {
+    color: white;
+  }
+  

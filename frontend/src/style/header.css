@@ -1,0 +1,107 @@
+.header-container {
+  background-color: #131436; /* Koyu mavi */
+  padding: 10px 0;
+  color: white;
+  transition: transform 0.3s ease;
+}
+
+.header-container.hidden {
+  transform: translateY(-100%);
+}
+
+.header-logo {
+  width: 80px; /* Increased from 60px to make it bigger */
+  height: 80px; /* Increased from 60px to make it bigger */
+  object-fit: contain;
+  margin-right: 15px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.site-name {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin: 0;
+  color: white;
+}
+
+.header-right {
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.header-badge {
+  display: flex;
+  align-items: center;
+  background-color: rgba(255, 255, 255, 0.15);
+  border-radius: 5px;
+  padding: 5px 10px;
+  gap: 8px;
+}
+
+.badge-icon {
+  font-size: 1.2rem;
+}
+
+.badge-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.badge-title {
+  font-weight: 600;
+  font-size: 0.9rem;
+  line-height: 1;
+}
+
+.badge-subtitle {
+  font-size: 0.8rem;
+  opacity: 0.9;
+  line-height: 1;
+}
+
+.ramazan-badge {
+  background-color: rgba(255, 215, 0, 0.2); /* Altın sarısı tonu */
+}
+
+.canli-badge {
+  background-color: rgba(220, 53, 69, 0.2); /* Kırmızı tonu */
+}
+
+.ziraat-badge {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.time-widget {
+  text-align: center;
+  background-color: rgba(255, 255, 255, 0.1);
+  padding: 5px 10px;
+  border-radius: 5px;
+}
+
+.time-label {
+  font-size: 0.8rem;
+  opacity: 0.9;
+}
+
+.time-value {
+  font-weight: bold;
+  font-size: 1.1rem;
+}
+
+@media (max-width: 767.98px) {
+  .header-right {
+    justify-content: center;
+    margin-top: 10px;
+  }
+
+  .site-name {
+    font-size: 1.2rem;
+  }
+
+  .header-logo {
+    width: 60px;
+    height: 60px;
+  }
+}
+

@@ -1,0 +1,110 @@
+.slider-container {
+    position: relative;
+    margin: 20px 0;
+    padding: 0 10px;
+  }
+  
+  .group-slider {
+    display: flex;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    gap: 15px;
+    padding: 10px 5px;
+  }
+  
+  .group-slider::-webkit-scrollbar {
+    display: none; /* Chrome, Safari, Opera */
+  }
+  
+  .group-slider-item {
+    flex: 0 0 auto;
+    width: 220px;
+    transition: transform 0.3s ease;
+  }
+  
+  .group-slider-item:hover {
+    transform: translateY(-5px);
+  }
+  
+  .group-slider-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+  
+  .group-slider-image {
+    position: relative;
+    width: 100%;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 8px;
+    margin-bottom: 10px;
+  }
+  
+  .group-slider-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+  }
+  
+  .group-slider-item:hover .group-slider-image img {
+    transform: scale(1.05);
+  }
+  
+  .group-slider-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+    max-height: 40px;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+  }
+  
+  .slider-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid #e0e0e0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 10;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    transition: all 0.2s ease;
+  }
+  
+  .slider-nav:hover {
+    background-color: #f8f8f8;
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.15);
+  }
+  
+  .slider-nav.prev {
+    left: -5px;
+  }
+  
+  .slider-nav.next {
+    right: -5px;
+  }
+  
+  @media (max-width: 768px) {
+    .culture-slide-item {
+      width: 180px;
+    }
+  
+    .culture-slide-image {
+      height: 120px;
+    }
+  }
+  
+  
