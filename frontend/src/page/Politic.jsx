@@ -1,11 +1,10 @@
-
-import { useState, useEffect } from "react"
-import { Container, Row, Col } from "react-bootstrap"
-import "../style/home.css"
-import ThirdGroup from "../components/ThirdGroup"
-import SliderGroup from "../components/SliderGroup"
-import { fetchNews2 } from "../utils/api";
-import { sortNewsData } from "../utils/sortNews"; 
+import { useState, useEffect } from "react";
+import { Container, Row, Col } from "react-bootstrap";
+import "../style/home.css";
+import ThirdGroup from "../components/ThirdGroup";
+import SliderGroup from "../components/SliderGroup";
+import { fetchNews2, getManuelHaber } from "../utils/api"; // getManuelHaber eklendi
+import { sortNewsData } from "../utils/sortNews";
 
 function Politic() {
   const [newsData, setNewsData] = useState([]);
@@ -16,27 +15,26 @@ function Politic() {
     const loadData = async () => {
       try {
         setLoading(true);
-        const data = await fetchNews2("siyaset");
-        console.log("Gelen Veri:", data); // API'den dönen veriyi kontrol et
 
-        if (!data) {
-          throw new Error("Veri alınamadı");
-        }
+        const [manuel, fetched] = await Promise.all([
+          getManuelHaber(),
+          fetchNews2("siyaset"),
+        ]);
 
-        // Veri bir dizi değilse, dizi içine al
-        const dataArray = Array.isArray(data) ? data : [data];
+        const manuelArray = Array.isArray(manuel) ? manuel : [manuel];
+        const fetchedArray = Array.isArray(fetched) ? fetched : [fetched];
 
-        if (dataArray.length === 0) {
+        if (fetchedArray.length === 0 && manuelArray.length === 0)
           throw new Error("Hiç haber bulunamadı");
-        }
 
-        // Use the sortNewsData function to sort the data
-        const sortedData = sortNewsData(dataArray);
+        // Manuel haberler en başta olacak şekilde birleştir
+        const combinedData = [...manuelArray, ...fetchedArray];
 
+        const sortedData = sortNewsData(combinedData);
         setNewsData(sortedData);
         setError(null);
       } catch (error) {
-        console.error(`Haber alırken hata oluştu:`, error.message);
+        console.error("Haber alırken hata oluştu:", error.message);
         setError(error.message);
       } finally {
         setLoading(false);
@@ -46,34 +44,26 @@ function Politic() {
     loadData();
   }, []);
 
+  if (loading) {
+    return <div className="text-center my-5">Haberler yükleniyor...</div>;
+  }
 
- // Veri yoksa veya yükleniyorsa yükleniyor mesajı göster
- if (loading) {
-  return <div className="text-center my-5">Haberler yükleniyor...</div>;
-}
+  if (error) {
+    return <div className="text-center my-5 text-danger">Hata: {error}</div>;
+  }
 
-// Hata varsa hata mesajı göster
-if (error) {
-  return <div className="text-center my-5 text-danger">Hata: {error}</div>;
-}
+  if (newsData.length === 0) {
+    return <div className="text-center my-5">Siyaset haberleri bulunamadı.</div>;
+  }
 
-// Veri boşsa mesaj göster
-if (newsData.length === 0) {
-  return <div className="text-center my-5">Ekonomi haberleri bulunamadı.</div>;
-}
-
-  // Veriyi  eşit gruba bölme işlemi
-  const groupSize = Math.ceil(newsData.length / 4); // Her grup için haber sayısını hesapla
-  const group1 = newsData.slice(0, groupSize); // İlk grup
-  const group2= newsData.slice(groupSize, groupSize * 2); // İkinci grup
-  const group3 = newsData.slice(groupSize * 2); // Üçüncü grup
-
-
-
+  // Veriyi gruplara böl
+  const groupSize = Math.ceil(newsData.length / 4);
+  const group1 = newsData.slice(0, groupSize);
+  const group2 = newsData.slice(groupSize, groupSize * 2);
+  const group3 = newsData.slice(groupSize * 2);
 
   return (
     <Container>
-      {/* Main News Carousel */}
       <section className="main-carousel">
         <Container fluid>
           <Row>
@@ -87,18 +77,14 @@ if (newsData.length === 0) {
         </Container>
       </section>
 
-      {/* News Categories */}
       <section className="news-categories">
         <Container fluid>
           <Row>
-            {/* Left Column - Main News */}
             <Col lg={12} md={12}>
-              {/* SPOR Section */}
               <div className="category-section">
                 <h2 className="category-title">SPOR</h2>
                 <ThirdGroup items={group2} />
               </div>
-              {/* KÜLTÜR Section */}
               <div className="category-section">
                 <h2 className="category-title">KÜLTÜR</h2>
                 <SliderGroup items={group3} />
@@ -108,8 +94,7 @@ if (newsData.length === 0) {
         </Container>
       </section>
     </Container>
-  )
+  );
 }
 
-export default Politic
-
+export default Politic;

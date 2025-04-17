@@ -1,5 +1,6 @@
 const newsService = require("../services/fetchNewsByDataService")
 
+
 const getNews = async (req, res) => {
   const categoryName = req.params.category
   console.log(`Controller: Kategori isteği alındı: ${categoryName}`)

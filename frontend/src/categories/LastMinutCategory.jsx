@@ -105,7 +105,7 @@ function LastMinutCategory() {
             <Col lg={12} md={6} sm={12}>
               {/* EKONOMİ Section */}
               <div className="category-section">
-                <h2 className="category-title">Başlik</h2>
+                <h2 className="category-title">Son Dakika Haberler</h2>
                 <SecondGroup items={group3} />
               </div>
             </Col>
@@ -113,7 +113,7 @@ function LastMinutCategory() {
             <Col lg={12} md={6} sm={12}>
               {/* KÜLTÜR Section */}
               <div className="category-section">
-                <h2 className="category-title">Başlik</h2>
+                <h2 className="category-title">Son Dakika Haberler</h2>
                 <SliderGroup items={group4} />
               </div>
             </Col>

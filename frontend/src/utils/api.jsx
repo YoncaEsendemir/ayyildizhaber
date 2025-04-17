@@ -102,6 +102,45 @@ export const fetchCurrencyMoney = async () => {
   }
 }
 
+// getManuelHaber fonksiyonunu src klasöründeki dosya yoluna göre düzeltiyorum
+export const getManuelHaber = async () => {
+  try {
+    // Dosya yolunu src/ManuelHaber/ayyildizhaber.json olarak düzeltiyorum
+    const response = await axios.get("/src/ManuelHaber/ayyildizhaber.json")
+
+    // Gelen veriyi kontrol etmek için log ekliyorum
+    console.log("Manuel haber verisi:", response.data)
+
+    // Veri yapısını TRT haberleri ile uyumlu hale getiriyorum
+    if (Array.isArray(response.data)) {
+      return response.data.map((haber) => ({
+        ...haber,
+        // Eksik alanları varsa dolduruyorum
+        haber_metni: haber.haber_metni || "",
+        haber_link: haber.haber_link || "",
+        kategori: haber.kategori || "Genel",
+      }))
+    }
+
+    return response.data
+  } catch (error) {
+    console.error(`Manuel haber alırken hata oluştu:`, error)
+    console.error(`Hata detayı:`, error.response || error.message)
+
+    // Alternatif yol deniyorum
+    try {
+      // Alternatif dosya yolu
+      const altResponse = await import("../ManuelHaber/ayyildizhaber.json")
+      console.log("Alternatif yoldan manuel haber verisi:", altResponse.default)
+      return Array.isArray(altResponse.default) ? altResponse.default : [altResponse.default]
+    } catch (altError) {
+      console.error(`Alternatif yoldan manuel haber alırken hata:`, altError)
+      // Hata durumunda boş dizi döndürüyorum ki uygulama çalışmaya devam etsin
+      return []
+    }
+  }
+}
+
 export const fetchCurrencyHistory = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/currency/history`)
