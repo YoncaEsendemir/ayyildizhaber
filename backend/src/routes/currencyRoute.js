@@ -17,4 +17,7 @@ router.get("/all", currencyController.getAllCurrency)
 // Geçmiş döviz verilerini getir
 router.get("/history", currencyController.getCurrencyHistory)
 
+// API durumunu kontrol et
+router.get("/status", currencyController.checkApiStatus)
+
 module.exports = router

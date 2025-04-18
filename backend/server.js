@@ -25,12 +25,32 @@ app.use("/api/currency", currencyRoutes)
 cron.schedule("*/30 * * * *", async () => {
   try {
     console.log("Döviz verileri güncelleniyor...")
-    await currencyService.fetchCurrencyMoneyData()
-    await currencyService.fetchCurrencyGoldData()
-    await currencyService.fetchCurrencyCryptoData()
-    console.log("Döviz verileri güncellendi")
+
+    // Her bir API çağrısını ayrı ayrı try-catch bloklarına al
+    try {
+      await currencyService.fetchCurrencyMoneyData()
+      console.log("Para birimi verileri güncellendi")
+    } catch (moneyError) {
+      console.error("Para birimi verileri güncellenirken hata:", moneyError.message)
+    }
+
+    try {
+      await currencyService.fetchCurrencyGoldData()
+      console.log("Altın verileri güncellendi")
+    } catch (goldError) {
+      console.error("Altın verileri güncellenirken hata:", goldError.message)
+    }
+
+    try {
+      await currencyService.fetchCurrencyCryptoData()
+      console.log("Kripto para verileri güncellendi")
+    } catch (cryptoError) {
+      console.error("Kripto para verileri güncellenirken hata:", cryptoError.message)
+    }
+
+    console.log("Döviz verileri güncelleme işlemi tamamlandı")
   } catch (error) {
-    console.error("Zamanlanmış döviz güncelleme hatası:", error)
+    console.error("Zamanlanmış döviz güncelleme hatası:", error.message)
   }
 })
 

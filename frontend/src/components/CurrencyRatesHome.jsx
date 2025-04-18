@@ -2,8 +2,8 @@
 
 import { useEffect, useState, useRef, useCallback } from "react"
 import { fetchCurrencyGold, fetchCurrencyCrypto, fetchCurrencyMoney, fetchCurrencyHistory } from "../utils/api"
-import { Container, Row, Col, Nav } from "react-bootstrap"
-import {  FaChevronRight, FaDollarSign, FaEuroSign, FaPoundSign, FaCoins, FaBitcoin} from "react-icons/fa"
+import { Container, Row, Col } from "react-bootstrap"
+import { FaChevronRight, FaDollarSign, FaEuroSign, FaPoundSign, FaCoins, FaBitcoin } from "react-icons/fa"
 import "../App.css"
 
 function CurrencyRatesHome() {
@@ -15,9 +15,7 @@ function CurrencyRatesHome() {
   const [error, setError] = useState(null)
   const [tooltipData, setTooltipData] = useState(null)
   const tooltipRef = useRef(null)
-  const [activeTab, setActiveTab] = useState("USD")
 
-  // Her para birimi için ayrı canvas ref
   const canvasRefs = {
     USD: useRef(null),
     EUR: useRef(null),
@@ -83,11 +81,10 @@ function CurrencyRatesHome() {
     }
 
     getCurrencies()
-    const intervalId = setInterval(getCurrencies, 2 * 60 * 60 * 1000) // 2 saatte bir güncelle
+    const intervalId = setInterval(getCurrencies, 2 * 60 * 60 * 1000)
     return () => clearInterval(intervalId)
   }, [])
 
-  // Tüm para birimleri için etiketler ve ikonlar
   const currencyLabels = [
     { key: "USD", label: "DOLAR", type: "money", icon: <FaDollarSign className="currency-icon" /> },
     { key: "EUR", label: "EURO", type: "money", icon: <FaEuroSign className="currency-icon" /> },
@@ -95,38 +92,31 @@ function CurrencyRatesHome() {
     { key: "GRA", label: "GRAM ALTIN", type: "gold", icon: <FaCoins className="currency-icon" /> },
     { key: "BTC", label: "BITCOIN", type: "crypto", icon: <FaBitcoin className="currency-icon" /> },
   ]
+
   const getSparklineData = (currencyKey) => {
     if (!currencyHistory || currencyHistory.length === 0) {
       return []
     }
 
-    const data = []
-
-    currencyHistory.forEach((item) => {
-      let value = null
-
-      if (currencyKey === "USD" || currencyKey === "EUR" || currencyKey === "GBP") {
-        value = item.money?.[currencyKey]?.buying
+    return currencyHistory.map((item) => {
+      let value
+      if (["USD", "EUR", "GBP"].includes(currencyKey)) {
+        value = item?.money?.[currencyKey]?.buying
       } else if (currencyKey === "GRA") {
-        value = item.gold?.[currencyKey]?.buying
+        value = item?.gold?.[currencyKey]?.buying
       } else if (currencyKey === "BTC") {
-        value = item.crypto?.[currencyKey]?.buying
+        value = item?.crypto?.[currencyKey]?.buying
       }
-
-      if (value) {
-        data.push(Number.parseFloat(value))
-      }
-    })
-
-    return data
+      return value ? Number.parseFloat(value) : null
+    }).filter((v) => v !== null)
   }
 
   useEffect(() => {
     const currencies = [
-      { key: "USD", trend: Number(currenciesMoney.USD_Change) >= 0 ? "up" : "down" },
-      { key: "EUR", trend: Number(currenciesMoney.EUR_Change) >= 0 ? "up" : "down" },
-      { key: "GRA", trend: Number(currenciesGold.GRA_Change) >= 0 ? "up" : "down" },
-      { key: "BTC", trend: Number(currenciesCrypto.BTC_Change) >= 0 ? "up" : "down" },
+      { key: "USD", trend: Number(currenciesMoney?.USD_Change) >= 0 ? "up" : "down" },
+      { key: "EUR", trend: Number(currenciesMoney?.EUR_Change) >= 0 ? "up" : "down" },
+      { key: "GRA", trend: Number(currenciesGold?.GRA_Change) >= 0 ? "up" : "down" },
+      { key: "BTC", trend: Number(currenciesCrypto?.BTC_Change) >= 0 ? "up" : "down" },
     ]
 
     currencies.forEach(({ key, trend }) => {
@@ -138,7 +128,6 @@ function CurrencyRatesHome() {
 
   const showTooltip = (e, currency, value, timestamp) => {
     if (!tooltipRef.current) return
-
     setTooltipData({ currency, value, timestamp, x: e.clientX, y: e.clientY })
     tooltipRef.current.style.display = "block"
     tooltipRef.current.style.left = `${e.pageX}px`
@@ -151,26 +140,24 @@ function CurrencyRatesHome() {
     setTooltipData(null)
   }
 
-  const renderCurrencyCard = (key, label, type, trend, value, change) => {
-    return (
-      <div className="currency-card" key={key}>
-        <div className="currency-title">{label}</div>
-        <div className="currency-value-container">
-          <div className={`currency-value ${trend}`}>
-            {trend === "up" ? "▲" : "▼"} {value}
-          </div>
-          <div className={`currency-change ${trend}`}>{change}%</div>
+  const renderCurrencyCard = (key, label, type, trend, value, change) => (
+    <div className="currency-card" key={key}>
+      <div className="currency-title">{label}</div>
+      <div className="currency-value-container">
+        <div className={`currency-value ${trend}`}>
+          {trend === "up" ? "▲" : "▼"} {value}
         </div>
-        <div
-          className="sparkline-container"
-          onMouseMove={(e) => showTooltip(e, label, value, new Date().toLocaleString())}
-          onMouseLeave={hideTooltip}
-        >
-          <canvas ref={canvasRefs[key]} width="120" height="40" className="sparkline" />
-        </div>
+        <div className={`currency-change ${trend}`}>{change}%</div>
       </div>
-    )
-  }
+      <div
+        className="sparkline-container"
+        onMouseMove={(e) => showTooltip(e, label, value, new Date().toLocaleString())}
+        onMouseLeave={hideTooltip}
+      >
+        <canvas ref={canvasRefs[key]} width="120" height="40" className="sparkline" />
+      </div>
+    </div>
+  )
 
   return (
     <Container fluid className="currency-container">
@@ -182,36 +169,28 @@ function CurrencyRatesHome() {
         ) : (
           <>
             {renderCurrencyCard(
-              "USD",
-              "DOLAR",
-              "money",
-              Number(currenciesMoney.USD_Change) >= 0 ? "up" : "down",
-              currenciesMoney.USD_Buying,
-              Math.abs(Number(currenciesMoney.USD_Change)).toFixed(2),
+              "USD", "DOLAR", "money",
+              Number(currenciesMoney?.USD_Change) >= 0 ? "up" : "down",
+              currenciesMoney?.USD_Buying ?? "N/A",
+              Math.abs(Number(currenciesMoney?.USD_Change ?? 0)).toFixed(2)
             )}
             {renderCurrencyCard(
-              "EUR",
-              "EURO",
-              "money",
-              Number(currenciesMoney.EUR_Change) >= 0 ? "up" : "down",
-              currenciesMoney.EUR_Buying,
-              Math.abs(Number(currenciesMoney.EUR_Change)).toFixed(2),
+              "EUR", "EURO", "money",
+              Number(currenciesMoney?.EUR_Change) >= 0 ? "up" : "down",
+              currenciesMoney?.EUR_Buying ?? "N/A",
+              Math.abs(Number(currenciesMoney?.EUR_Change ?? 0)).toFixed(2)
             )}
             {renderCurrencyCard(
-              "GRA",
-              "ALTIN(gr)",
-              "gold",
-              Number(currenciesGold.GRA_Change) >= 0 ? "up" : "down",
-              currenciesGold.GRA_Buying,
-              Math.abs(Number(currenciesGold.GRA_Change)).toFixed(2),
+              "GRA", "ALTIN(gr)", "gold",
+              Number(currenciesGold?.GRA_Change) >= 0 ? "up" : "down",
+              currenciesGold?.GRA_Buying ?? "N/A",
+              Math.abs(Number(currenciesGold?.GRA_Change ?? 0)).toFixed(2)
             )}
             {renderCurrencyCard(
-              "BTC",
-              "BİST 100",
-              "crypto",
-              Number(currenciesCrypto.BTC_Change) >= 0 ? "up" : "down",
-              currenciesCrypto.BTC_Buying,
-              Math.abs(Number(currenciesCrypto.BTC_Change)).toFixed(2),
+              "BTC", "BITCOIN", "crypto",
+              Number(currenciesCrypto?.BTC_Change) >= 0 ? "up" : "down",
+              currenciesCrypto?.BTC_Buying ?? "N/A",
+              Math.abs(Number(currenciesCrypto?.BTC_Change ?? 0)).toFixed(2)
             )}
           </>
         )}
@@ -226,68 +205,6 @@ function CurrencyRatesHome() {
           </>
         )}
       </div>
-
-      <Row className="links-row">
-      <Col xs={12} md={9}>
-          <div className="currency-scroll d-flex overflow-auto">
-            {loading ? (
-              <div className="currency-item">Yükleniyor...</div>
-            ) : error ? (
-              <div className="currency-item text-danger">{error}</div>
-            ) : (
-              currencyLabels.map(({ key, label, type, icon }) => {
-                let buyingRate, sellingRate, changeRate
-
-                if (type === "crypto") {
-                  buyingRate = currenciesCrypto[`${key}_Buying`]
-                  sellingRate = currenciesCrypto[`${key}_Selling`]
-                  changeRate = Number.parseFloat(currenciesCrypto[`${key}_Change`]) || 0
-                } else if (type === "gold") {
-                  buyingRate = currenciesGold[`${key}_Buying`]
-                  sellingRate = currenciesGold[`${key}_Selling`]
-                  changeRate = Number.parseFloat(currenciesGold[`${key}_Change`]) || 0
-                } else if (type === "money") {
-                  buyingRate = currenciesMoney[`${key}_Buying`]
-                  sellingRate = currenciesMoney[`${key}_Selling`]
-                  changeRate = Number.parseFloat(currenciesMoney[`${key}_Change`]) || 0
-                }
-
-                const trend = changeRate > 0 ? "up" : "down"
-
-                return (
-                  <div
-                    key={key}
-                    className={`currency-item px-3 d-flex align-items-center ${activeTab === key ? "active" : ""}`}
-                    onClick={() => setActiveTab(key)}
-                    style={{ cursor: "pointer" }}
-                  >
-                    {icon}
-                    <span className="fw-bold ms-1">{label}</span>
-                    <span className="ms-2">
-                      {buyingRate} / {sellingRate}
-                    </span>
-                    <span className={`ms-2 ${trend}`}>
-                      {trend === "up" ? "▲" : "▼"} {Math.abs(changeRate).toFixed(2)}%
-                    </span>
-                  </div>
-                )
-              })
-            )}
-          </div>
-        </Col>
-
-
-        <Col xs={12} className="text-end d-flex justify-content-end">
-          <Nav.Link href="/hava-durumu" target="_blank" className="manset-link d-flex align-items-center mx-3">
-            <span>Hava Durumu</span>
-            <FaChevronRight className="ms-2" />
-          </Nav.Link>
-          <Nav.Link href="/manset" target="_blank" className="manset-link d-flex align-items-center">
-            <span>Manşet Haberleri</span>
-            <FaChevronRight className="ms-2" />
-          </Nav.Link>
-        </Col>
-      </Row>
     </Container>
   )
 }

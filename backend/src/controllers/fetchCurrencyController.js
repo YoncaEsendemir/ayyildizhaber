@@ -6,8 +6,19 @@ const getGold = async (req, res) => {
     const goldData = await currencyService.fetchCurrencyGoldData()
     res.json(goldData)
   } catch (error) {
-    console.error("Döviz verileri alınırken hata oluştu:", error)
-    res.status(500).json({ error: "Veri alınamadı" })
+    console.error("Altın verileri alınırken hata oluştu:", error.message)
+
+    // Daha detaylı hata mesajı
+    let errorMessage = "Veri alınamadı"
+    if (error.response) {
+      errorMessage += ` - Sunucu yanıtı: ${error.response.status}`
+    } else if (error.request) {
+      errorMessage += " - Sunucudan yanıt alınamadı"
+    } else {
+      errorMessage += ` - ${error.message}`
+    }
+
+    res.status(500).json({ error: errorMessage })
   }
 }
 
@@ -17,8 +28,19 @@ const getCrypto = async (req, res) => {
     const cryptoData = await currencyService.fetchCurrencyCryptoData()
     res.json(cryptoData)
   } catch (error) {
-    console.error("Döviz verileri alınırken hata oluştu:", error)
-    res.status(500).json({ error: "Veri alınamadı" })
+    console.error("Kripto para verileri alınırken hata oluştu:", error.message)
+
+    // Daha detaylı hata mesajı
+    let errorMessage = "Veri alınamadı"
+    if (error.response) {
+      errorMessage += ` - Sunucu yanıtı: ${error.response.status}`
+    } else if (error.request) {
+      errorMessage += " - Sunucudan yanıt alınamadı"
+    } else {
+      errorMessage += ` - ${error.message}`
+    }
+
+    res.status(500).json({ error: errorMessage })
   }
 }
 
@@ -28,8 +50,19 @@ const getMoney = async (req, res) => {
     const moneyData = await currencyService.fetchCurrencyMoneyData()
     res.json(moneyData)
   } catch (error) {
-    console.error("Döviz verileri alınırken hata oluştu:", error)
-    res.status(500).json({ error: "Veri alınamadı" })
+    console.error("Para birimi verileri alınırken hata oluştu:", error.message)
+
+    // Daha detaylı hata mesajı
+    let errorMessage = "Veri alınamadı"
+    if (error.response) {
+      errorMessage += ` - Sunucu yanıtı: ${error.response.status}`
+    } else if (error.request) {
+      errorMessage += " - Sunucudan yanıt alınamadı"
+    } else {
+      errorMessage += ` - ${error.message}`
+    }
+
+    res.status(500).json({ error: errorMessage })
   }
 }
 
@@ -39,8 +72,19 @@ const getAllCurrency = async (req, res) => {
     const allData = await currencyService.fetchAllCurrencyData()
     res.json(allData)
   } catch (error) {
-    console.error("Tüm döviz verileri alınırken hata oluştu:", error)
-    res.status(500).json({ error: "Veri alınamadı" })
+    console.error("Tüm döviz verileri alınırken hata oluştu:", error.message)
+
+    // Daha detaylı hata mesajı
+    let errorMessage = "Veri alınamadı"
+    if (error.response) {
+      errorMessage += ` - Sunucu yanıtı: ${error.response.status}`
+    } else if (error.request) {
+      errorMessage += " - Sunucudan yanıt alınamadı"
+    } else {
+      errorMessage += ` - ${error.message}`
+    }
+
+    res.status(500).json({ error: errorMessage })
   }
 }
 
@@ -50,8 +94,53 @@ const getCurrencyHistory = async (req, res) => {
     const historyData = await currencyService.getAllCurrencyHistory()
     res.json(historyData)
   } catch (error) {
-    console.error("Geçmiş döviz verileri alınırken hata oluştu:", error)
-    res.status(500).json({ error: "Geçmiş veriler alınamadı" })
+    console.error("Geçmiş döviz verileri alınırken hata oluştu:", error.message)
+
+    // Daha detaylı hata mesajı
+    let errorMessage = "Geçmiş veriler alınamadı"
+    if (error.response) {
+      errorMessage += ` - Sunucu yanıtı: ${error.response.status}`
+    } else if (error.request) {
+      errorMessage += " - Sunucudan yanıt alınamadı"
+    } else {
+      errorMessage += ` - ${error.message}`
+    }
+
+    res.status(500).json({ error: errorMessage })
+  }
+}
+
+// API durumunu kontrol eder
+const checkApiStatus = async (req, res) => {
+  try {
+    const moneyApiUrl = await currencyService.getBestApiUrl("money")
+    const goldApiUrl = await currencyService.getBestApiUrl("gold")
+    const cryptoApiUrl = await currencyService.getBestApiUrl("crypto")
+
+    res.json({
+      status: "success",
+      apis: {
+        money: {
+          url: moneyApiUrl,
+          available: await currencyService.checkApiAvailability(moneyApiUrl),
+        },
+        gold: {
+          url: goldApiUrl,
+          available: await currencyService.checkApiAvailability(goldApiUrl),
+        },
+        crypto: {
+          url: cryptoApiUrl,
+          available: await currencyService.checkApiAvailability(cryptoApiUrl),
+        },
+      },
+    })
+  } catch (error) {
+    console.error("API durumu kontrol edilirken hata oluştu:", error.message)
+    res.status(500).json({
+      status: "error",
+      message: "API durumu kontrol edilemedi",
+      error: error.message,
+    })
   }
 }
 
@@ -61,4 +150,5 @@ module.exports = {
   getMoney,
   getAllCurrency,
   getCurrencyHistory,
+  checkApiStatus,
 }
