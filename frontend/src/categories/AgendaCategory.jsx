@@ -1,108 +1,85 @@
+"use client"
+
 import { useState, useEffect } from "react"
 import { Container, Row, Col } from "react-bootstrap"
 import "../style/home.css"
-import CardGridLayout from "../components/CardGridLayout"
-import FirstGroup from "../components/FirstGroup"
 import ThirdGroup from "../components/ThirdGroup"
 import SliderGroup from "../components/SliderGroup"
-import { fetchNews2, getManuelHaber } from "../utils/api"
-import { sortNewsData } from "../utils/sortNews"
+import { fetchNewsHelperCategory } from "../utils/fetchNewsDataHelper"
+
+// This function would be replaced with your actual API call
 
 function AgendaCategory() {
+  
   const [newsData, setNewsData] = useState([])
-  const [categorizedNews, setCategorizedNews] = useState({})
-  const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true)
-
-        let manuelNews = []
-        try {
-          manuelNews = await getManuelHaber()
-          console.log("Manuel haberler:", manuelNews)
-        } catch (manuelError) {
-          console.error("Manuel haber yüklenemedi:", manuelError)
-        }
-
-        const trtNews = await fetchNews2("gundem")
-        console.log("TRT gündem haberleri:", trtNews)
-
-        const manuelArray = Array.isArray(manuelNews) ? manuelNews : manuelNews ? [manuelNews] : []
-        const trtArray = Array.isArray(trtNews) ? trtNews : trtNews ? [trtNews] : []
-
-        if (manuelArray.length === 0 && trtArray.length === 0) {
-          throw new Error("Hiç haber bulunamadı.")
-        }
-
-        const sortedFetched = sortNewsData(trtArray)
-        const combinedNews = [...manuelArray, ...sortedFetched]
-
-        // Kategorilere göre ayır
-        const grouped = {}
-        const categoryNames = []
-
-        combinedNews.forEach((news) => {
-          const category = news.kategori || "Diğer"
-          if (!grouped[category]) {
-            grouped[category] = []
-            categoryNames.push(category)
-          }
-          grouped[category].push(news)
-        })
-
-        setNewsData(combinedNews)
-        setCategorizedNews(grouped)
-        setCategories(categoryNames)
-        setError(null)
-      } catch (err) {
-        console.error("Haber yüklenemedi:", err.message)
-        setError(err.message)
-      } finally {
-        setLoading(false)
-      }
+    // "spor" kategorisindeki haberleri getir
+    fetchNewsHelperCategory("gundem", setLoading, setNewsData, setError)
+  }, [])
+    // Veri yoksa veya yükleniyorsa yükleniyor mesajı göster
+    if (loading) {
+      return <div className="text-center my-5">Haberler yükleniyor...</div>;
     }
 
-    loadData()
-  }, [])
+ // Veri yoksa veya yükleniyorsa yükleniyor mesajı göster
+ if (loading) {
+  return <div className="text-center my-5">Haberler yükleniyor...</div>;
+}
 
-  if (loading) return <div className="text-center my-5">Haberler yükleniyor...</div>
-  if (error) return <div className="text-center my-5 text-danger">Hata: {error}</div>
-  if (newsData.length === 0) return <div className="text-center my-5">Haber bulunamadı.</div>
+// Hata varsa hata mesajı göster
+if (error) {
+  return <div className="text-center my-5 text-danger">Hata: {error}</div>;
+}
+
+// Veri boşsa mesaj göster
+if (newsData.length === 0) {
+  return <div className="text-center my-5">Ekonomi haberleri bulunamadı.</div>;
+}
+
+  // Veriyi  eşit gruba bölme işlemi
+  const groupSize = Math.ceil(newsData.length / 4); // Her grup için haber sayısını hesapla
+  const group1 = newsData.slice(0, groupSize); // İlk grup
+  const group2= newsData.slice(groupSize, groupSize * 2); // İkinci grup
+  const group3 = newsData.slice(groupSize * 2); // Üçüncü grup
+
+
+
 
   return (
     <Container>
-      {/* Öne çıkan haberler */}
-      <CardGridLayout items={newsData.slice(0, 6)} />
+      {/* Main News Carousel */}
+      <section className="main-carousel">
+        <Container fluid>
+          <Row>
+            <Col md={12} className="px-md-3">
+              <div className="category-section">
+                <h2 className="category-title">KÜLTÜR</h2>
+                <SliderGroup items={group1} />
+              </div>
+            </Col>
+          </Row>
+        </Container>
+      </section>
 
-      {/* Kategorilere göre render */}
+      {/* News Categories */}
       <section className="news-categories">
         <Container fluid>
           <Row>
-            <Col lg={12}>
-              {categories.map((category, index) => {
-                const items = categorizedNews[category]
-                let GroupComponent
-                if (index % 3 === 0) {
-                  GroupComponent = FirstGroup
-                } else if (index % 3 === 1) {
-                  GroupComponent = ThirdGroup
-                } else {
-                  GroupComponent = SliderGroup
-                }
-
-                return (
-                  <div key={category} className="category-section mb-5">
-                    <h2 className="category-title border-bottom pb-2 mb-4">
-                      {category.toUpperCase()}
-                    </h2>
-                    <GroupComponent items={items.slice(0, 6)} />
-                  </div>
-                )
-              })}
+            {/* Left Column - Main News */}
+            <Col lg={12} md={12}>
+              {/* SPOR Section */}
+              <div className="category-section">
+                <h2 className="category-title">SPOR</h2>
+                <ThirdGroup items={group2} />
+              </div>
+              {/* KÜLTÜR Section */}
+              <div className="category-section">
+                <h2 className="category-title">KÜLTÜR</h2>
+                <SliderGroup items={group3} />
+              </div>
             </Col>
           </Row>
         </Container>
@@ -112,3 +89,4 @@ function AgendaCategory() {
 }
 
 export default AgendaCategory
+

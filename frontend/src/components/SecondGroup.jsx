@@ -12,16 +12,16 @@ function SecondGroup({ items }) {
   // Tek ve çift ID'lere göre ayır
   const evenIdNews = items
     ? items.filter((news) => {
-        const lastDigit = news.haber_id?.toString().slice(-1);
-        return !isNaN(lastDigit) && parseInt(lastDigit) % 2 === 0;
-      })
+      const lastDigit = news.haber_id?.toString().slice(-1);
+      return !isNaN(lastDigit) && parseInt(lastDigit) % 2 === 0;
+    })
     : [];
 
   const oddIdNews = items
     ? items.filter((news) => {
-        const lastDigit = news.haber_id?.toString().slice(-1);
-        return !isNaN(lastDigit) && parseInt(lastDigit) % 2 !== 0;
-      })
+      const lastDigit = news.haber_id?.toString().slice(-1);
+      return !isNaN(lastDigit) && parseInt(lastDigit) % 2 !== 0;
+    })
     : [];
 
   // Toplam haber sayısı
@@ -38,7 +38,7 @@ function SecondGroup({ items }) {
     <Row>
       <Col md={6}>
         {leftColumn.map((news) => (
-          <Card key={news.haber_id} className="news-card mb-3" onClick={()=>handleNewsClick(news)}>
+          <Card key={news.haber_id} className="news-card mb-3" onClick={() => handleNewsClick(news)}>
             <Card.Img
               variant="top"
               src={news.resim_link}
@@ -55,10 +55,14 @@ function SecondGroup({ items }) {
       <Col md={6}>
         <div className="news-list">
           {rightColumn.map((news) => (
-            <a onClick={()=>handleNewsClick(news)} className="news-list-item" key={news.haber_id}>
+            <a onClick={() => handleNewsClick(news)} className="news-list-item" key={news.haber_id}>
               <div className="news-thumbnail" style={{ minWidth: 120, height: 80 }}>
                 <img
-                  src={news.resim_link}
+                  src={
+                    typeof news.resim_link === "string" && news.resim_link.startsWith("/")
+                      ? `http://localhost:5000${news.resim_link}`
+                      : news.resim_link || "/placeholder.svg"
+                  }
                   alt="News thumbnail"
                   width={120}
                   height={80}

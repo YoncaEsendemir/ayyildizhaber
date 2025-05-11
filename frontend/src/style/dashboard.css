@@ -1,0 +1,74 @@
+.admin-page-container {
+    display: flex;
+    min-height: 100vh;
+    background-color: #f8f9fa;
+  }
+  
+  .admin-content {
+    flex: 1;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  
+  .sidebar-container {
+    height: 100vh;
+    position: sticky;
+    top: 0;
+  }
+  
+  /* Dashboard kartları için stil */
+  .dashboard-card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    border-radius: 8px;
+    border: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+  }
+  
+  .dashboard-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+  }
+  
+  .dashboard-card .card-title {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .dashboard-card .card-body {
+    padding: 1.5rem;
+  }
+  
+  .stats-icon {
+    width: 48px;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    margin-right: 15px;
+  }
+  
+  .table-responsive {
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .table th {
+    font-weight: 600;
+    background-color: #f8f9fa;
+  }
+  
+  .badge {
+    padding: 0.5em 0.75em;
+    font-weight: 500;
+  }
+  
+  .btn-group .btn {
+    margin-right: 5px;
+  }
+  
+  .btn-group .btn:last-child {
+    margin-right: 0;
+  }
+  

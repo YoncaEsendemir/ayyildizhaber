@@ -14,16 +14,16 @@ function FirstGroup({ items }) {
   // Tek ve çift ID'lere göre ayır
   const evenIdNews = items
     ? items.filter((news) => {
-        const lastDigit = news.haber_id?.toString().slice(-1);
-        return !isNaN(lastDigit) && parseInt(lastDigit) % 2 === 0;
-      })
+      const lastDigit = news.haber_id?.toString().slice(-1);
+      return !isNaN(lastDigit) && parseInt(lastDigit) % 2 === 0;
+    })
     : [];
 
   const oddIdNews = items
     ? items.filter((news) => {
-        const lastDigit = news.haber_id?.toString().slice(-1);
-        return !isNaN(lastDigit) && parseInt(lastDigit) % 2 !== 0;
-      })
+      const lastDigit = news.haber_id?.toString().slice(-1);
+      return !isNaN(lastDigit) && parseInt(lastDigit) % 2 !== 0;
+    })
     : [];
 
   // Toplam haber sayısı
@@ -45,7 +45,11 @@ function FirstGroup({ items }) {
             <a onClick={() => handleNewsClick(news)} className="news-list-item" key={news.haber_id}>
               <div className="news-thumbnail" style={{ minWidth: 120, height: 80 }}>
                 <img
-                  src={news.resim_link || "/placeholder.svg?height=80&width=120"}
+                    src={
+                    typeof news.resim_link === "string" && news.resim_link.startsWith("/")
+                      ? `http://localhost:5000${news.resim_link}`
+                      : news.resim_link || "/placeholder.svg"
+                  }
                   alt={news.baslik || "Haber görseli"}
                   className="img-fluid"
                   width={120}

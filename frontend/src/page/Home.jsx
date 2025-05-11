@@ -1,3 +1,4 @@
+"use client"
 
 import { useState, useEffect } from "react"
 import { Container, Row, Col } from "react-bootstrap"
@@ -8,8 +9,7 @@ import CardGridLayout from "../components/CardGridLayout"
 import FirstGroup from "../components/FirstGroup"
 import SecondGroup from "../components/SecondGroup"
 import ThirdGroup from "../components/ThirdGroup"
-import { fetchNews2, getManuelHaber } from "../utils/api"
-import { sortNewsData } from "../utils/sortNews"
+import { fetchNewsHelper, categorizeNews } from "../utils/fetchNewsDataHelper"
 import "bootstrap/dist/css/bootstrap.min.css"
 
 function HomePage() {
@@ -18,69 +18,35 @@ function HomePage() {
   const [categories, setCategories] = useState([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
+  const [trtNews, setTrtNews] = useState([])
+  const [myNews, setMyNews] = useState([])
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true)
-
-        // Manuel haberleri al
-        let manuelNews = []
-        try {
-          manuelNews = await getManuelHaber()
-          console.log("Manuel haberler başarıyla yüklendi:", manuelNews)
-        } catch (manuelError) {
-          console.error("Manuel haberler yüklenirken hata:", manuelError)
-        }
-
-        // TRT haberlerini al
-        const trtNews = await fetchNews2(" ")
-        console.log("TRT haberleri başarıyla yüklendi:", trtNews)
-
-        // Dizilere dönüştür
-        const manuelArray = Array.isArray(manuelNews) ? manuelNews : manuelNews ? [manuelNews] : []
-        const fetchedArray = Array.isArray(trtNews) ? trtNews : trtNews ? [trtNews] : []
-
-        if (fetchedArray.length === 0 && manuelArray.length === 0) {
-          throw new Error("Hiç haber bulunamadı")
-        }
-
-        // TRT haberlerini sırala
-        const sortedFetched = sortNewsData(fetchedArray)
-
-        // Manuel haberleri başta tut, diğerlerini sırala
-        const combinedSorted = [...manuelArray, ...sortedFetched]
-        console.log("Birleştirilmiş ve sıralanmış veri:", combinedSorted)
-
-        // Kategorilere göre gruplama
-        const newsCategories = {}
-        const categoryList = []
-
-        combinedSorted.forEach((news) => {
-          const category = news.kategori || "Diğer"
-
-          if (!newsCategories[category]) {
-            newsCategories[category] = []
-            categoryList.push(category)
-          }
-
-          newsCategories[category].push(news)
-        })
-
-        setNewsData(combinedSorted)
-        setCategorizedNews(newsCategories)
-        setCategories(categoryList)
-        setError(null)
-      } catch (error) {
-        console.error("Haber alırken hata oluştu:", error)
-        setError(error.message)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    loadData()
+    // Tüm haberleri getir
+    fetchNewsHelper(setLoading, setNewsData, setError).then(() => {
+      // fetchNewsHelper içinde setNewsData çağrıldığı için
+      // burada newsData güncellenmiş olacak, ancak state güncellemeleri
+      // asenkron olduğu için doğrudan newsData'yı kullanamayız
+    })
   }, [])
+
+  // newsData değiştiğinde kategorilere ayır
+  useEffect(() => {
+    if (newsData.length > 0) {
+      const { categorizedNews: catNews, categories: cats } = categorizeNews(newsData)
+      setCategorizedNews(catNews)
+      setCategories(cats)
+
+      // TRT ve kendi haberlerimizi ayır (opsiyonel)
+      // Bu kısmı API'nizin döndürdüğü verilere göre düzenlemeniz gerekebilir
+      const trtItems = newsData.filter((item) => item.source === "trt" || item.kaynak === "trt")
+      const myItems = newsData.filter((item) => item.source !== "trt" && item.kaynak !== "trt")
+
+      setTrtNews(trtItems)
+      setMyNews(myItems)
+    }
+  }, [newsData])
+
   // Veri yoksa veya yükleniyorsa yükleniyor mesajı göster
   if (loading) {
     return <div className="text-center my-5">Haberler yükleniyor...</div>
@@ -103,11 +69,18 @@ function HomePage() {
     ...categories.filter((cat) => !priorityCategories.includes(cat)),
   ]
 
-
-
   return (
     <Container>
-      {/* Main News Carousel */}
+      {/* Debug bilgileri */}
+      <div className="debug-info" style={{ display: "none" }}>
+        <p>TRT Haberler: {trtNews.length}</p>
+        <p>Kendi Haberlerim: {myNews.length}</p>
+        <p>Toplam Haberler: {newsData.length}</p>
+        <p>Kategoriler: {categories.join(", ")}</p>
+        <p>Resim Yolları: {JSON.stringify(newsData.slice(0, 2).map((item) => item.resim_link))}</p>
+      </div>
+
+      {/* Main News Carousel - Tüm haberleri göster */}
       <section className="main-carousel">
         <CarouselHome items={newsData} />
       </section>
@@ -125,18 +98,27 @@ function HomePage() {
         <Container fluid>
           <Row>
             <Col lg={12}>
-              {sortedCategories.map((category, index) => (
-                <div key={category} className="category-section mb-5">
-                  <h2 className="category-title border-bottom pb-2 mb-4">{category.toUpperCase()}</h2>
-                  {index % 3 === 0 ? (
-                    <FirstGroup items={categorizedNews[category].slice(0, 6)} />
-                  ) : index % 3 === 1 ? (
-                    <SecondGroup items={categorizedNews[category].slice(0, 6)} />
-                  ) : (
-                    <ThirdGroup items={categorizedNews[category].slice(0, 6)} />
-                  )}
-                </div>
-              ))}
+              {sortedCategories.map((category, index) => {
+                // Kategorideki haber sayısını kontrol et
+                if (!categorizedNews[category] || categorizedNews[category].length === 0) {
+                  return null
+                }
+
+                return (
+                  <div key={category} className="category-section mb-5">
+                    <h2 className="category-title border-bottom pb-2 mb-4">
+                      {category.toUpperCase()} ({categorizedNews[category].length})
+                    </h2>
+                    {index % 3 === 0 ? (
+                      <FirstGroup items={categorizedNews[category].slice(0, 6)} />
+                    ) : index % 3 === 1 ? (
+                      <SecondGroup items={categorizedNews[category].slice(0, 6)} />
+                    ) : (
+                      <ThirdGroup items={categorizedNews[category].slice(0, 6)} />
+                    )}
+                  </div>
+                )
+              })}
             </Col>
           </Row>
         </Container>
@@ -146,4 +128,3 @@ function HomePage() {
 }
 
 export default HomePage
-  

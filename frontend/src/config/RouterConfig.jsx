@@ -20,34 +20,68 @@ import Politic from "../page/Politic"
 import Technology from "../page/Technology"
 import Health from "../page/Health"
 import Carpage from "../page/CarPage"
+import Login from "../page/auth/Login"
+import Logout from "../page/auth/Logout"
+import PrivateRoute from "./PrivateRoute"
+import Dashboard from "../page/admin/Dashboard"
+import SidebarLayout from "../components/SidebarLayout"
+import NewsList from "../page/admin/NewsList"
+import NewsCreate from "../page/admin/NewsCreate"
+import NewsCategoryList from "../page/admin/NewsCategoryList"
+import NewsEdit from "../page/admin/NewsEdit"
+
 
 function RouterConfig() {
   return (
-    <Routes>
-      <Route path="/" element={<Home />} />
-      <Route path="/video" element={<VideoCategory />} />
-      <Route path="/gundem" element={<AgendaCategory />} />
-      <Route path="/ekonomi" element={<EconomyCategory />} />
-      <Route path="/dunya" element={<WorldCategory />} />
-      <Route path="/spor" element={<SportCategory />} />
-      <Route path="/son-dakika" element={<LastMinuteCategory />} /> {/* Tekrarı kaldırıldı */}
-      <Route path="/canli-tv" element={<LiveTvCategory />} />
-      <Route path="/ozel-haber" element={<SpecialNewsCategory />} />
-      <Route path="/resmi-ilan" element={<OfficialAnnouncementCategory />} />
-      <Route path="ezan-vakti" element={<PrayerTime />} />
-      <Route path="haber-icerik" element={<NewsContent2 />} />
-      <Route path="/egitim" element={<Education />} />
-      <Route path="/siyaset" element={<Politic />} />
-      <Route path="/hava-durumu" element={<WeatherPage />} />
-      <Route path="/yasam" element={<Yasam />} />
-      <Route path="/teknoloji" element={<Technology />} />
-      <Route path="/saglik" element={<Health />} />
-      <Route path="/kultur-sanat" element={<CultureArt />} />
-      <Route path="/search" element={<Home />} /> {/* Temporary using Home as search results page */}
-      <Route path="/manset" element={<MansetNews/>} />
-      <Route path="/otomobil" element={<Carpage/>} />
+      <Routes>
 
-    </Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="admin/login" element={<Login/>} />
+        <Route path="/video" element={<VideoCategory />} />
+        <Route path="/gundem" element={<AgendaCategory />} />
+        <Route path="/ekonomi" element={<EconomyCategory />} />
+        <Route path="/dunya" element={<WorldCategory />} />
+        <Route path="/spor" element={<SportCategory />} />
+        <Route path="/son-dakika" element={<LastMinuteCategory />} /> {/* Tekrarı kaldırıldı */}
+        <Route path="/canli-tv" element={<LiveTvCategory />} />
+        <Route path="/ozel-haber" element={<SpecialNewsCategory />} />
+        <Route path="/resmi-ilan" element={<OfficialAnnouncementCategory />} />
+        <Route path="ezan-vakti" element={<PrayerTime />} />
+        <Route path="haber-icerik" element={<NewsContent2 />} />
+        <Route path="/egitim" element={<Education />} />
+        <Route path="/siyaset" element={<Politic />} />
+        <Route path="/hava-durumu" element={<WeatherPage />} />
+        <Route path="/yasam" element={<Yasam />} />
+        <Route path="/teknoloji" element={<Technology />} />
+        <Route path="/saglik" element={<Health />} />
+        <Route path="/kultur-sanat" element={<CultureArt />} />
+        <Route path="/search" element={<Home />} /> {/* Temporary using Home as search results page */}
+        <Route path="/manset" element={<MansetNews />} />
+        <Route path="/otomobil" element={<Carpage />} />
+  
+
+      <Route element={<PrivateRoute allowedRoute={"admin"} />}>
+          <Route path="/admin/dashboard" element={ <SidebarLayout><Dashboard /></SidebarLayout>} />
+        
+          <Route path="/admin/haberler" element={<SidebarLayout><NewsList /></SidebarLayout>} />
+
+          <Route path="/admin/haber-ekle" element={<SidebarLayout><NewsCreate /></SidebarLayout>}/>
+          
+          <Route path="/admin/kategoriler" element={<SidebarLayout><NewsCategoryList/></SidebarLayout>}/>
+
+         <Route path="/admin/haber-duzenle"  element={ <SidebarLayout><NewsEdit /></SidebarLayout>} /> 
+
+         <Route path="/admin/cikis"  element={ <SidebarLayout><Logout /></SidebarLayout>} /> 
+
+            {/*
+          <Route path="/admin/one-cikanlar" element={<Highlights />} />
+          <Route path="/admin/ayarlar" element={<Settings />} />
+
+          */
+         }
+        </Route>
+
+      </Routes>
   )
 }
 

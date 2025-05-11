@@ -11,9 +11,9 @@ export default function SliderGroup({ items }) {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
 
-  const handleNewsClick = (news)=>{
+  const handleNewsClick = (news) => {
     navigate(`/haber-icerik`, { state: { news } });
-    
+
   }
   const scrollAmount = 300
 
@@ -55,10 +55,14 @@ export default function SliderGroup({ items }) {
       <div className="group-slider" ref={sliderRef} onScroll={handleScroll}>
         {items.map((news) => (
           <div className="group-slider-item" key={news.haber_id}>
-            <a onClick={()=>handleNewsClick(news)} style={{ cursor: "pointer" }}  role="button" className="group-slider-link position-relative">
+            <a onClick={() => handleNewsClick(news)} style={{ cursor: "pointer" }} role="button" className="group-slider-link position-relative">
               <div className="group-slider-image">
                 <img
-                  src={news.resim_link || "/placeholder.svg?height=150&width=220"}
+                  src={
+                    typeof news.resim_link === "string" && news.resim_link.startsWith("/")
+                      ? `http://localhost:5000${news.resim_link}`
+                      : news.resim_link || "/placeholder.svg"
+                  }
                   alt={news.baslik}
                   width={220}
                   height={150}

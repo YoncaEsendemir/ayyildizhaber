@@ -5,47 +5,17 @@ import { Container, Row, Col } from "react-bootstrap"
 import "../style/home.css"
 import ThirdGroup from "../components/ThirdGroup"
 import SliderGroup from "../components/SliderGroup"
-import { fetchNews2 } from "../utils/api";
-import { sortNewsData } from "../utils/sortNews"; 
+import { fetchNewsHelperCategory } from "../utils/fetchNewsDataHelper"
 
 function Health() {
-  const [newsData, setNewsData] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [newsData, setNewsData] = useState([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    const loadData = async () => {
-      try {
-        setLoading(true);
-        const data = await fetchNews2("saglik");
-        console.log("Gelen Veri:", data); // API'den dönen veriyi kontrol et
-
-        if (!data) {
-          throw new Error("Veri alınamadı");
-        }
-
-        // Veri bir dizi değilse, dizi içine al
-        const dataArray = Array.isArray(data) ? data : [data];
-
-        if (dataArray.length === 0) {
-          throw new Error("Hiç haber bulunamadı");
-        }
-
-        // Use the sortNewsData function to sort the data
-        const sortedData = sortNewsData(dataArray);
-
-        setNewsData(sortedData);
-        setError(null);
-      } catch (error) {
-        console.error(`Haber alırken hata oluştu:`, error.message);
-        setError(error.message);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadData();
-  }, []);
+    // "spor" kategorisindeki haberleri getir
+    fetchNewsHelperCategory("saglik", setLoading, setNewsData, setError)
+  }, [])
 
 
  // Veri yoksa veya yükleniyorsa yükleniyor mesajı göster

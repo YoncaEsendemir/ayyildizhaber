@@ -52,7 +52,11 @@ function ThirdGroup({ items }) {
                 >
                   <img
                     className="d-block w-100"
-                    src={news.resim_link}
+                    src={
+                      typeof news.resim_link === "string" && news.resim_link.startsWith("/")
+                        ? `http://localhost:5000${news.resim_link}`
+                        : news.resim_link || "/placeholder.svg"
+                    }
                     alt={news.name}
                   />
                   <Carousel.Caption>

@@ -3,7 +3,7 @@ import { Container, Row, Col } from "react-bootstrap";
 import "../style/home.css";
 import ThirdGroup from "../components/ThirdGroup";
 import SliderGroup from "../components/SliderGroup";
-import { fetchNews2, getManuelHaber } from "../utils/api"; // getManuelHaber eklendi
+import { fetchNews2, getAllNews } from "../utils/api"; 
 import { sortNewsData } from "../utils/sortNews";
 
 function Politic() {
@@ -16,19 +16,19 @@ function Politic() {
       try {
         setLoading(true);
 
-        const [manuel, fetched] = await Promise.all([
-          getManuelHaber(),
+        const [myNews, fetched] = await Promise.all([
+          getAllNews(),
           fetchNews2("siyaset"),
         ]);
 
-        const manuelArray = Array.isArray(manuel) ? manuel : [manuel];
+        const myNewsArray = Array.isArray(myNews) ? myNews : [myNews];
         const fetchedArray = Array.isArray(fetched) ? fetched : [fetched];
 
         if (fetchedArray.length === 0 && manuelArray.length === 0)
           throw new Error("Hiç haber bulunamadı");
 
         // Manuel haberler en başta olacak şekilde birleştir
-        const combinedData = [...manuelArray, ...fetchedArray];
+        const combinedData = [...myNewsArray, ...fetchedArray];
 
         const sortedData = sortNewsData(combinedData);
         setNewsData(sortedData);

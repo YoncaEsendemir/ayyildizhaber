@@ -4,49 +4,18 @@ import { Container } from "react-bootstrap"
 import CardGridLayout from "../components/CardGridLayout"
 import SliderGroup from "../components/SliderGroup"
 import "../style/home.css"
-import { fetchNews2 } from "../utils/api";
-import { sortNewsData } from "../utils/sortNews"; // Import the sorting function
-// Slider resimlerini import et
+import { fetchNewsHelperCategory } from "../utils/fetchNewsDataHelper"
 
 function Technology() {
+
   const [newsData, setNewsData] = useState([])
-  const [loading,setLoading]=useState(true)
-  const [error,setError]=useState(null)
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState(null)
 
   useEffect(() => {
-    const loadData = async () => {
-        try{
-          setLoading(true)
-          const data = await fetchNews2("teknolojis");
-          console.log("Gelen Veri:", data); // API'den dönen veriyi kontrol et
-
-          if (!data) {
-            throw new Error("Veri alınamadı");
-          }
-  
-          // Veri bir dizi değilse, dizi içine al
-          const dataArray = Array.isArray(data) ? data : [data];
-  
-          if (dataArray.length === 0) {
-            throw new Error("Hiç haber bulunamadı");
-          }
-  
-          // Use the sortNewsData function to sort the data
-          const sortedData = sortNewsData(dataArray);
-  
-          setNewsData(sortedData);
-          setError(null);
-        } catch (error) {
-          console.error(`Haber alırken hata oluştu:`, error.message);
-          setError(error.message);
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      loadData();
-    }, []);
-  
+    // "spor" kategorisindeki haberleri getir
+    fetchNewsHelperCategory("teknoloji", setLoading, setNewsData, setError)
+  }, [])
     // Veri yoksa veya yükleniyorsa yükleniyor mesajı göster
     if (loading) {
       return <div className="text-center my-5">Haberler yükleniyor...</div>;

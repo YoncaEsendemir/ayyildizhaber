@@ -20,7 +20,11 @@ function CardGridLayout({ items }) {
             <Col className="news-grid-item">
             <a onClick={()=>handleNewsClick(news)} style={{ cursor: "pointer" }}   role="button" className="news-list-item position-relative w-100 h-100">
               <Col className="news-grid-img" >
-                <img src={news.resim_link} alt={`News ${news.haber_id}`} />
+                <img                     src={
+                    typeof news.resim_link === "string" && news.resim_link.startsWith("/")
+                      ? `http://localhost:5000${news.resim_link}`
+                      : news.resim_link || "/placeholder.svg"
+                  } alt={`News ${news.haber_id}`} />
               </Col>
               <Col className="news-grid-content">
                 <h4 className="fs-5">

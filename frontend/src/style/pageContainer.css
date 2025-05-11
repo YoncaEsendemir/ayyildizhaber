@@ -1,0 +1,29 @@
+.page-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content-wrapper {
+  display: flex;
+  flex: 1;
+  padding-top: 10px; /* Adjust this value based on your header height */
+}
+
+.main-content {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
+  height: calc(100vh - 120px - 60px); /* Adjust these values based on your header and footer heights */
+}
+
+.main-content.with-sidebar {
+  margin-left: 250px;
+}
+
+@media (max-width: 768px) {
+  .main-content.with-sidebar {
+    margin-left: 60px;
+  }
+}
+

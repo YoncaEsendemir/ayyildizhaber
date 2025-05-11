@@ -26,7 +26,11 @@ const NewsContent = () => {
                 {news.ozet}
               </div>
 
-              <img className="news-image py-3 px-3" src={news.resim_link} />
+              <img className="news-image py-3 px-3"                     src={
+                    typeof news.resim_link === "string" && news.resim_link.startsWith("/")
+                      ? `http://localhost:5000${news.resim_link}`
+                      : news.resim_link || "/placeholder.svg"
+                  }/>
             </div>
             <div
               className="news-content mt-3 py-3 px-3"

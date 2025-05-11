@@ -1,6 +1,6 @@
 "use client"
 import Carousel from "react-bootstrap/Carousel"
-import { Row, Col, Card, Container } from "react-bootstrap"
+import { Row, Col, Container } from "react-bootstrap"
 import "../App.css"
 import "../style/carouselStyles.css"
 import { Link } from "react-router-dom"
@@ -17,7 +17,6 @@ function CarouselHome({ items, cardItems }) {
   return (
     <Container fluid className="px-2 my-3">
       <Row className="g-2">
-
         <Col lg={12} md={6} sm={12}>
           <Carousel
             data-bs-theme="dark"
@@ -34,7 +33,11 @@ function CarouselHome({ items, cardItems }) {
                 >
                   <img
                     className="d-block w-100"
-                    src={news.resim_link || "/placeholder.svg"}
+                    src={
+                      typeof news.resim_link === "string" && news.resim_link.startsWith("/")
+                        ? `http://localhost:5000${news.resim_link}`
+                        : news.resim_link || "/placeholder.svg"
+                    }
                     alt={news.alt || `Slide ${index + 1}`}
                     style={{ height: "480px", objectFit: "cover" }}
                   />
