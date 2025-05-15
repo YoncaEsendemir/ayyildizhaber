@@ -80,7 +80,7 @@ const addNews = async (req, res) => {
       contents,
       categoryId: categoryIds,
       broadcasting_date: broadcasting_date || new Date().toISOString().split("T")[0],
-      state: state || "aktif",
+      state: state || "taslak",
       foto_list,
       video_list,
     };
