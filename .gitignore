@@ -1,9 +1,9 @@
 # Database files
-mysql_data/
+#mysql_data/
 
 # Environment variables
-backend/.env
-frontend/.env
+#backend/.env
+#frontend/.env
 
 # Node modules
 backend/node_modules/
