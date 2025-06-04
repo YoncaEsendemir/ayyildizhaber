@@ -1,5 +1,5 @@
 # Database files
-#mysql_data/
+mysql_data/
 
 # Environment variables
 #backend/.env
