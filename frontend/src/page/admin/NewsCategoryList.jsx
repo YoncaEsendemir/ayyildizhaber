@@ -186,7 +186,6 @@ function NewsCategoryList() {
   };
 
   useEffect(() => {
-
     if (alert.show) {
       const timer = setTimeout(() => {
         setAlert({ ...alert, show: false });

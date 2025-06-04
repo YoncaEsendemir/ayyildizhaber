@@ -27,16 +27,9 @@ const Footer = () => {
           </Col>
 
           <Col lg={2} md={4} sm={6} xs={12} className="footer-column">
-            <h4 className="footer-title">PROGRAMLAR</h4>
-            <div className="footer-links">
-
-            </div>
-          </Col>
-
-          <Col lg={2} md={4} sm={6} xs={12} className="footer-column">
             <h4 className="footer-title">Ay Yıldız Haber Özel</h4>
             <div className="footer-links">
-              <a href="/agenda" target="_blank"  rel="noopener noreferrer" className="footer-link">
+              <a href="/gundem" target="_blank"  rel="noopener noreferrer" className="footer-link">
                 GÜNDEM
               </a>
               <a href="/ekonomi" target="_blank"  rel="noopener noreferrer" className="footer-link">
@@ -102,18 +95,30 @@ const Footer = () => {
           <Col lg={2} md={4} sm={6} xs={12} className="footer-column">
             <h4 className="footer-title">KURUMSAL</h4>
             <div className="footer-links">
-              <Link to="/rss" className="footer-link">
-                RSS
-              </Link>
-              <Link to="/bize-ulasin" className="footer-link">
+              <a href="/bize-ulasin" target="_blank"  rel="noopener noreferrer" className="footer-link">
                 BİZE ULAŞIN
-              </Link>
-              <Link to="/kunye" className="footer-link">
-                KÜNYE/İLETİŞİM
-              </Link>
-              <Link to="/veri-politikasi" className="footer-link">
+              </a>
+              <a href="/kunye" target="_blank"  rel="noopener noreferrer" className="footer-link">
+                KÜNYE
+              </a>
+              <a href="/hakkimizda" target="_blank"  rel="noopener noreferrer" className="footer-link">
+                HAKKIMIZDA
+              </a>
+            </div>
+          </Col>
+
+          <Col lg={2} md={4} sm={6} xs={12} className="footer-column">
+            <h4 className="footer-title">Kvkk</h4>
+            <div className="footer-links">
+              <a a href="/rss" target="_blank"  rel="noopener noreferrer" className="footer-link" >
+                RSS
+              </a>
+              <a href="/veri-saklama-imha-politikasi" target="_blank"  rel="noopener noreferrer" className="footer-link">
+              KİŞİSEL VERİLERİ SAKLAMA VE İMHA POLİTİKASI
+              </a>
+              <a href="/veri-politikasi" target="_blank"  rel="noopener noreferrer"  className="footer-link">
                 VERİ POLİTİKASI
-              </Link>
+              </a>
             </div>
           </Col>
         </Row>

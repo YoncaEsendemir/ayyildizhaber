@@ -8,16 +8,16 @@ const register = async (req, res) => {
   const { name, email, password } = req.body //İstek gövdesinden email ve password değerlerini alır
 
   if (!name || !email || !password) {
-    return res.status(400).json({ message: "Tüm alanlar zorunludur!" })
+    return res.status(400).json({ status: "error", message: "Tüm alanlar zorunludur!" });
   }
 
   try {
-    const result = await authService.registerAdmin(name, email, password)
-    res.status(201).json(result) // 201 tekili başarılı bir şekide giriş yaptı
+    const result = await authService.registerAdmin(name, email, password);
+    res.status(201).json(result); // Başarı durumunda dönen objeyi direkt gönder
   } catch (error) {
-    res.status(400).json({ message: error.message })
+    res.status(400).json({ status: "error", message: error.message }); // Hata durumunda hatayı gönder
   }
-}
+};
 
 const login = async (req, res) => {
   const { email, password } = req.body

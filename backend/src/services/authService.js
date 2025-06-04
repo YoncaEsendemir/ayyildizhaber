@@ -14,7 +14,7 @@ const registerAdmin = async (name, email, password) => {
     const hashedPassword = await bcrypt.hash(password.toString(), 10)
     await db.query("INSERT INTO admin_table (name,email,password) VALUES (?,?,?)", [name, email, hashedPassword])
 
-    return { message: "Kayıt başarılı" }
+    return { status:'success',message: "Kayıt başarılı" }
   } catch (err) {
     console.error("registerda hata var")
     throw err

@@ -56,7 +56,6 @@ if (newsData.length === 0) {
           <Row>
             <Col md={12} className="px-md-3">
               <div className="category-section">
-                <h2 className="category-title">KÜLTÜR</h2>
                 <SliderGroup items={group1} />
               </div>
             </Col>
@@ -72,12 +71,10 @@ if (newsData.length === 0) {
             <Col lg={12} md={12}>
               {/* SPOR Section */}
               <div className="category-section">
-                <h2 className="category-title">SPOR</h2>
                 <ThirdGroup items={group2} />
               </div>
               {/* KÜLTÜR Section */}
               <div className="category-section">
-                <h2 className="category-title">KÜLTÜR</h2>
                 <SliderGroup items={group3} />
               </div>
             </Col>

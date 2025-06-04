@@ -2,8 +2,7 @@
 
 import { useEffect, useState, useRef, useCallback } from "react"
 import { fetchCurrencyGold, fetchCurrencyCrypto, fetchCurrencyMoney, fetchCurrencyHistory } from "../utils/api"
-import { Container, Row, Col } from "react-bootstrap"
-import { FaChevronRight, FaDollarSign, FaEuroSign, FaPoundSign, FaCoins, FaBitcoin } from "react-icons/fa"
+import { Container, Row } from "react-bootstrap"
 import "../App.css"
 
 function CurrencyRatesHome() {
@@ -40,38 +39,40 @@ function CurrencyRatesHome() {
     const max = Math.max(...data)
     const range = max - min || 1
 
-    ctx.beginPath()
-    ctx.strokeStyle = color
-    ctx.lineWidth = 1.5
+    ctx.beginPath() //yeni bir çizim yolunun başlangıcını işaretler.
+    ctx.strokeStyle = color // ile çizgi rengi ayarlanır.
+    ctx.lineWidth = 1.5 // çizgi kalınlığı ayarlanır.
 
     data.forEach((value, index) => {
       const x = padding + (index / (data.length - 1)) * effectiveWidth
       const y = height - padding - ((value - min) / range) * effectiveHeight
 
       if (index === 0) {
-        ctx.moveTo(x, y)
+        ctx.moveTo(x, y) //çizim yolunun başlangıcını belirler.
       } else {
-        ctx.lineTo(x, y)
+        ctx.lineTo(x, y) //  mevcut noktadan bir sonraki noktaya bir çizgi çizilir.
       }
     })
 
-    ctx.stroke()
+    ctx.stroke() // çizim işlemi tamamlanır ve çizgi canvas üzerinde görüntülenir.
   }, [])
 
   useEffect(() => {
     const getCurrencies = async () => {
       try {
         setLoading(true)
-        const moneyData = await fetchCurrencyMoney()
-        const goldData = await fetchCurrencyGold()
-        const cryptoData = await fetchCurrencyCrypto()
-        const historyData = await fetchCurrencyHistory()
+        setError(null)
+        const [moneyData, goldData, cryptoData, historyData] = await Promise.all([
+          fetchCurrencyMoney(),
+          fetchCurrencyGold(),
+          fetchCurrencyCrypto(),
+          fetchCurrencyHistory(),
+        ])
 
         setCurrenciesMoney(moneyData)
         setCurrenciesGold(goldData)
         setCurrenciesCrypto(cryptoData)
         setCurrencyHistory(historyData)
-        setError(null)
       } catch (err) {
         console.error("Döviz verileri yüklenirken hata oluştu:", err)
         setError("Döviz verileri yüklenemedi")
@@ -81,34 +82,29 @@ function CurrencyRatesHome() {
     }
 
     getCurrencies()
-    const intervalId = setInterval(getCurrencies, 2 * 60 * 60 * 1000)
+    // 5 dakikada bir kontrol et (cache varsa API'ye istek atmaz)
+    const intervalId = setInterval(getCurrencies, 8 * 60 * 1000)
     return () => clearInterval(intervalId)
   }, [])
-
-  const currencyLabels = [
-    { key: "USD", label: "DOLAR", type: "money", icon: <FaDollarSign className="currency-icon" /> },
-    { key: "EUR", label: "EURO", type: "money", icon: <FaEuroSign className="currency-icon" /> },
-    { key: "GBP", label: "STERLİN", type: "money", icon: <FaPoundSign className="currency-icon" /> },
-    { key: "GRA", label: "GRAM ALTIN", type: "gold", icon: <FaCoins className="currency-icon" /> },
-    { key: "BTC", label: "BITCOIN", type: "crypto", icon: <FaBitcoin className="currency-icon" /> },
-  ]
 
   const getSparklineData = (currencyKey) => {
     if (!currencyHistory || currencyHistory.length === 0) {
       return []
-    }
+    } 
 
-    return currencyHistory.map((item) => {
-      let value
-      if (["USD", "EUR", "GBP"].includes(currencyKey)) {
-        value = item?.money?.[currencyKey]?.buying
-      } else if (currencyKey === "GRA") {
-        value = item?.gold?.[currencyKey]?.buying
-      } else if (currencyKey === "BTC") {
-        value = item?.crypto?.[currencyKey]?.buying
-      }
-      return value ? Number.parseFloat(value) : null
-    }).filter((v) => v !== null)
+    return currencyHistory
+      .map((item) => {
+        let value
+        if (["USD", "EUR", "GBP"].includes(currencyKey)) {
+          value = item?.money?.[currencyKey]?.buying
+        } else if (currencyKey === "GRA") {
+          value = item?.gold?.[currencyKey]?.buying
+        } else if (currencyKey === "BTC") {
+          value = item?.crypto?.[currencyKey]?.buying
+        }
+        return value ? Number.parseFloat(value) : null
+      })
+      .filter((v) => v !== null)
   }
 
   useEffect(() => {
@@ -121,7 +117,7 @@ function CurrencyRatesHome() {
 
     currencies.forEach(({ key, trend }) => {
       const data = getSparklineData(key)
-      const color = trend === "up" ? "#f44336" : "#4caf50"
+      const color = trend === "up" ? "#10b981" : "#ef4444"
       drawSparkline(canvasRefs[key], data, color)
     })
   }, [currencyHistory, currenciesMoney, currenciesGold, currenciesCrypto, drawSparkline])
@@ -145,13 +141,13 @@ function CurrencyRatesHome() {
       <div className="currency-title">{label}</div>
       <div className="currency-value-container">
         <div className={`currency-value ${trend}`}>
-          {trend === "up" ? "▲" : "▼"} {value}
+          {trend === "up" ? "▲" : trend === "down" ? "▼" : "="} {value || "N/A"}
         </div>
         <div className={`currency-change ${trend}`}>{change}%</div>
       </div>
       <div
         className="sparkline-container"
-        onMouseMove={(e) => showTooltip(e, label, value, new Date().toLocaleString())}
+        onMouseMove={(e) => showTooltip(e, label, value, new Date().toLocaleString("tr-TR"))}
         onMouseLeave={hideTooltip}
       >
         <canvas ref={canvasRefs[key]} width="120" height="40" className="sparkline" />
@@ -169,28 +165,52 @@ function CurrencyRatesHome() {
         ) : (
           <>
             {renderCurrencyCard(
-              "USD", "DOLAR", "money",
-              Number(currenciesMoney?.USD_Change) >= 0 ? "up" : "down",
+              "USD",
+              "DOLAR",
+              "money",
+              Number(currenciesMoney?.USD_Change) >= 0
+                ? "up"
+                : Number(currenciesMoney?.USD_Change) < 0
+                  ? "down"
+                  : "neutral",
               currenciesMoney?.USD_Buying ?? "N/A",
-              Math.abs(Number(currenciesMoney?.USD_Change ?? 0)).toFixed(2)
+              Math.abs(Number(currenciesMoney?.USD_Change ?? 0)).toFixed(2),
             )}
             {renderCurrencyCard(
-              "EUR", "EURO", "money",
-              Number(currenciesMoney?.EUR_Change) >= 0 ? "up" : "down",
+              "EUR",
+              "EURO",
+              "money",
+              Number(currenciesMoney?.EUR_Change) >= 0
+                ? "up"
+                : Number(currenciesMoney?.EUR_Change) < 0
+                  ? "down"
+                  : "neutral",
               currenciesMoney?.EUR_Buying ?? "N/A",
-              Math.abs(Number(currenciesMoney?.EUR_Change ?? 0)).toFixed(2)
+              Math.abs(Number(currenciesMoney?.EUR_Change ?? 0)).toFixed(2),
             )}
             {renderCurrencyCard(
-              "GRA", "ALTIN(gr)", "gold",
-              Number(currenciesGold?.GRA_Change) >= 0 ? "up" : "down",
+              "GRA",
+              "ALTIN(gr)",
+              "gold",
+              Number(currenciesGold?.GRA_Change) >= 0
+                ? "up"
+                : Number(currenciesGold?.GRA_Change) < 0
+                  ? "down"
+                  : "neutral",
               currenciesGold?.GRA_Buying ?? "N/A",
-              Math.abs(Number(currenciesGold?.GRA_Change ?? 0)).toFixed(2)
+              Math.abs(Number(currenciesGold?.GRA_Change ?? 0)).toFixed(2),
             )}
             {renderCurrencyCard(
-              "BTC", "BITCOIN", "crypto",
-              Number(currenciesCrypto?.BTC_Change) >= 0 ? "up" : "down",
+              "BTC",
+              "BITCOIN",
+              "crypto",
+              Number(currenciesCrypto?.BTC_Change) >= 0
+                ? "up"
+                : Number(currenciesCrypto?.BTC_Change) < 0
+                  ? "down"
+                  : "neutral",
               currenciesCrypto?.BTC_Buying ?? "N/A",
-              Math.abs(Number(currenciesCrypto?.BTC_Change ?? 0)).toFixed(2)
+              Math.abs(Number(currenciesCrypto?.BTC_Change ?? 0)).toFixed(2),
             )}
           </>
         )}

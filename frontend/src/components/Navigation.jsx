@@ -157,10 +157,6 @@ function Navigation() {
                       <li>
                         <Link to="/teknoloji">Teknoloji</Link>
                       </li>
-                      {/*
-                      <li>
-                        <Link to="/otomobil">Otomobil</Link>
-                      </li>*/}
                       <li>
                         <Link to="/saglik">Sağlık</Link>
                       </li>

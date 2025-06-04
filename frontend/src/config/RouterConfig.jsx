@@ -19,7 +19,6 @@ import Yasam from "../page/Yasam"
 import Politic from "../page/Politic"
 import Technology from "../page/Technology"
 import Health from "../page/Health"
-import Carpage from "../page/CarPage"
 import Login from "../page/auth/Login"
 import Logout from "../page/auth/Logout"
 import PrivateRoute from "./PrivateRoute"
@@ -28,7 +27,12 @@ import SidebarLayout from "../components/SidebarLayout"
 import NewsList from "../page/admin/NewsList"
 import NewsCreate from "../page/admin/NewsCreate"
 import NewsCategoryList from "../page/admin/NewsCategoryList"
+import Settings from "../page/admin/Settings"
 import NewsEdit from "../page/admin/NewsEdit"
+import Register from "../page/auth/Register"
+import Communication from "../page/general/Communication"
+import AboutUs from "../page/general/AboutUs"
+import Rss from "../page/general/Rss"
 
 
 function RouterConfig() {
@@ -37,6 +41,7 @@ function RouterConfig() {
 
         <Route path="/" element={<Home />} />
         <Route path="admin/login" element={<Login/>} />
+        <Route path="admin/register" element={<Register/>} />
         <Route path="/video" element={<VideoCategory />} />
         <Route path="/gundem" element={<AgendaCategory />} />
         <Route path="/ekonomi" element={<EconomyCategory />} />
@@ -57,7 +62,9 @@ function RouterConfig() {
         <Route path="/kultur-sanat" element={<CultureArt />} />
         <Route path="/search" element={<Home />} /> {/* Temporary using Home as search results page */}
         <Route path="/manset" element={<MansetNews />} />
-        <Route path="/otomobil" element={<Carpage />} />
+        <Route path="/bize-ulasin" element={<Communication />} />
+        <Route path="/rss" element={<Rss/>} />
+        <Route path="/hakkimizda" element={<AboutUs />} />
   
 
       <Route element={<PrivateRoute allowedRoute={"admin"} />}>
@@ -72,7 +79,7 @@ function RouterConfig() {
          <Route path="/admin/haber-duzenle"  element={ <SidebarLayout><NewsEdit /></SidebarLayout>} /> 
 
          <Route path="/admin/cikis"  element={ <SidebarLayout><Logout /></SidebarLayout>} /> 
-
+         <Route path="/admin/ayarlar"  element={ <SidebarLayout><Settings /></SidebarLayout>} /> 
             {/*
           <Route path="/admin/one-cikanlar" element={<Highlights />} />
           <Route path="/admin/ayarlar" element={<Settings />} />

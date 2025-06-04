@@ -3,31 +3,30 @@
 import { useState, useEffect } from "react"
 import { Nav } from "react-bootstrap"
 import { Link } from "react-router-dom"
-import {isAuthenticated} from "../utils/auth" 
-import { FaHome, FaPlus, FaNewspaper, FaList, FaCog } from "react-icons/fa"
+import { isAuthenticated } from "../utils/auth"
+import { FaHome, FaPlus, FaNewspaper, FaList, FaCog, FaSignOutAlt } from "react-icons/fa"
 import "../style/sidebar.css"
 
 function Sidebar() {
   const [isExpanded, setIsExpanded] = useState(true)
-  const [isAdmin, setIsAdmin] = useState(false)// Gerçek uygulamada bu JWT token'dan alınabilir
+  const [isAdmin, setIsAdmin] = useState(false)
 
   useEffect(() => {
     const authAdmin = isAuthenticated()
     setIsAdmin(authAdmin)
-  }, []) // Sadece 1 kez çalışsın diye boş dizi
+  }, [])
+
   const toggleSidebar = () => {
     setIsExpanded(!isExpanded)
   }
 
-
-
   return (
     <div className={`sidebar ${isExpanded ? "expanded" : "collapsed"}`}>
-      <div className="sidebar-toggle" onClick={toggleSidebar}>
+      <button className="sidebar-toggle" onClick={toggleSidebar}>
         {isExpanded ? "<" : ">"}
-      </div>
+      </button>
 
-      {isAdmin ? ( 
+      {isAdmin ? (
         <Nav className="flex-column">
           <Nav.Link as={Link} to="/admin/dashboard">
             <FaHome className="nav-icon" />
@@ -50,13 +49,12 @@ function Sidebar() {
             <span className="nav-text">Ayarlar</span>
           </Nav.Link>
           <Nav.Link as={Link} to="/admin/cikis">
-            <FaCog className="nav-icon" />
+            <FaSignOutAlt className="nav-icon" />
             <span className="nav-text">Çıkış</span>
           </Nav.Link>
-        </Nav>) 
-        : (
+        </Nav>
+      ) : (
         <Nav className="flex-column">
-          {/* Admin değilse boş bırak veya uyarı */}
           <span className="nav-text">Yetersiz yetki</span>
         </Nav>
       )}

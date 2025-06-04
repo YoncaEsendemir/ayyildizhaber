@@ -5,8 +5,9 @@ import "../App.css"
 import "../style/carouselStyles.css"
 import { Link } from "react-router-dom"
 import { useState } from "react"
+import {getFullImageUrl} from "../utils/fotoUrl"
 
-function CarouselHome({ items, cardItems }) {
+function CarouselHome({ items }) {
   const [activeIndex, setActiveIndex] = useState(0)
 
   // Carousel'ın aktif slide'ını değiştiren fonksiyon

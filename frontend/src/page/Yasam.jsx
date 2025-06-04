@@ -53,12 +53,11 @@ function YasamCategory() {
       </section>
 
       <section className="main-carousel">
-      <h2 className="category-title">Başlik</h2>
        <SliderGroup items={group2} />
       </section>
 
       <section className="main-carousel">
-      <h2 className="category-title">Başlik</h2>
+
        <SliderGroup items={group3} />
       </section>
     </Container>

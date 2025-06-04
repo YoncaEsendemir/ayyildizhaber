@@ -105,12 +105,12 @@ function MansetNews() {
             <Col lg={8} md={7}>
               {/* GÜNDEM Section */}
               <div className="category-section">
-                <h2 className="category-title">GÜNDEM</h2>
+           
                 <FirstGroup items={group4} />
               </div>
               {/* EKONOMİ Section */}
               <div className="category-section">
-                <h2 className="category-title">EKONOMİ</h2>
+          
                 <SecondGroup items={group5} />
               </div>
             </Col>

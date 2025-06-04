@@ -23,20 +23,21 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   const allowedImageTypes = ['image/jpeg', 'image/png', 'image/jpg'];
-  const allowedVideoTypes = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo'];
+ // const allowedVideoTypes = ['video/mp4', 'video/mpeg', 'video/quicktime', 'video/x-msvideo'];
 
-  if (allowedImageTypes.includes(file.mimetype) || allowedVideoTypes.includes(file.mimetype)) {
-    cb(null, true);
-  } else {
-    cb(new Error('Sadece .jpeg, .jpg, .png ve .mp4, .mpeg, .mov, .avi formatlarına izin verilmektedir.'), false);
-  }
-};
+ if (allowedImageTypes.includes(file.mimetype)) {
+  // Sadece resim tipleri kontrol ediliyor
+  cb(null, true)
+} else {
+  cb(new Error("Sadece .jpeg, .jpg, .png formatlarına izin verilmektedir."), false) // Hata mesajı güncellendi
+}
+}
 
 const upload = multer({
   storage: storage,
   fileFilter: fileFilter,
   limits: {
-    fileSize: 100 * 1024 * 1024 // 50MB
+    fileSize: 100 * 1024 * 1024 // 100MB 
   }
 });
 

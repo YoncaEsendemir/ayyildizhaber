@@ -28,21 +28,26 @@ function CurrencyRates() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
   const [activeTab, setActiveTab] = useState("USD")
+  const [lastUpdate, setLastUpdate] = useState(null)
 
   useEffect(() => {
     const getCurrencies = async () => {
       try {
         setLoading(true)
-        const moneyData = await fetchCurrencyMoney()
-        const goldData = await fetchCurrencyGold()
-        const cryptoData = await fetchCurrencyCrypto()
-        const historyData = await fetchCurrencyHistory()
+        setError(null)
+
+        const [moneyData, goldData, cryptoData, historyData] = await Promise.all([
+          fetchCurrencyMoney(),
+          fetchCurrencyGold(),
+          fetchCurrencyCrypto(),
+          fetchCurrencyHistory(),
+        ])
 
         setCurrenciesMoney(moneyData)
         setCurrenciesGold(goldData)
         setCurrenciesCrypto(cryptoData)
         setCurrencyHistory(historyData)
-        setError(null)
+        setLastUpdate(new Date().toLocaleString("tr-TR"))
       } catch (err) {
         console.error("Döviz verileri yüklenirken hata oluştu:", err)
         setError("Döviz verileri yüklenemedi")
@@ -52,7 +57,8 @@ function CurrencyRates() {
     }
 
     getCurrencies()
-    const intervalId = setInterval(getCurrencies, 2 * 60 * 60 * 1000) // 2 saatte bir güncelle
+    // 5 dakikada bir kontrol et (cache varsa API'ye istek atmaz)
+    const intervalId = setInterval(getCurrencies, 5 * 60 * 1000)
     return () => clearInterval(intervalId)
   }, [])
 
@@ -86,10 +92,9 @@ function CurrencyRates() {
       }
     }
 
-    // Yeni veri yapısına göre grafik verilerini hazırla
     const labels = currencyHistory.map((item) => {
       const date = new Date(item.timestamp)
-      return date.toLocaleDateString() + " " + date.toLocaleTimeString()
+      return date.toLocaleDateString("tr-TR") + " " + date.toLocaleTimeString("tr-TR")
     })
 
     const buyingData = []
@@ -146,6 +151,16 @@ function CurrencyRates() {
 
   return (
     <Container fluid>
+      {/* Başlık */}
+      <Row className="mb-3">
+        <Col xs={12}>
+          <div className="d-flex justify-content-between align-items-center">
+            <h4>Döviz Kurları</h4>
+            {lastUpdate && <small className="text-muted">Son güncelleme: {lastUpdate}</small>}
+          </div>
+        </Col>
+      </Row>
+
       <Row className="align-items-center py-2">
         <Col xs={12} md={9}>
           <div className="currency-scroll d-flex overflow-auto">
@@ -171,7 +186,7 @@ function CurrencyRates() {
                   changeRate = Number.parseFloat(currenciesMoney[`${key}_Change`]) || 0
                 }
 
-                const trend = changeRate > 0 ? "up" : "down"
+                const trend = changeRate > 0 ? "up" : changeRate < 0 ? "down" : "neutral"
 
                 return (
                   <div
@@ -183,11 +198,13 @@ function CurrencyRates() {
                     {icon}
                     <span className="fw-bold ms-1">{label}</span>
                     <span className="ms-2">
-                      {buyingRate} / {sellingRate}
+                      {buyingRate || "N/A"} / {sellingRate || "N/A"}
                     </span>
-                    <span className={`ms-2 ${trend}`}>
-                      {trend === "up" ? "▲" : "▼"} {Math.abs(changeRate).toFixed(2)}%
-                    </span>
+                    {changeRate !== 0 && (
+                      <span className={`ms-2 ${trend}`}>
+                        {trend === "up" ? "▲" : trend === "down" ? "▼" : "="} {Math.abs(changeRate).toFixed(2)}%
+                      </span>
+                    )}
                   </div>
                 )
               })

@@ -34,7 +34,7 @@ function ThirdGroup({ items }) {
     <Container fluid>
       <Row>
         {/* Slider Bölümü */}
-        <Col lg={8} className="thirdGroup-slider">
+        <Col lg={8} className="thirdGroup-slider mt-3">
           <Carousel
             activeIndex={index}
             onSelect={handleSelect}
@@ -69,7 +69,7 @@ function ThirdGroup({ items }) {
         </Col>
 
         {/* Küçük Haberler Bölümü */}
-        <Col lg={4} className="thirdGroup-small-news">
+        <Col lg={4} className="thirdGroup-small-news mt-3">
           {evenIdNews.slice(0, 4).map((news) => (
             <a
               onClick={() => handleNewsClick(news)}

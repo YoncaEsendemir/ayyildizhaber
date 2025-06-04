@@ -3,18 +3,31 @@
 import { useState, useRef, useEffect } from "react"
 import { useLocation, useNavigate } from "react-router-dom"
 import { Form, Button, Container, Row, Col, Card, Badge, ListGroup, Alert } from "react-bootstrap"
-import { editNews, getNewsById,fetchDashboardData } from "../../utils/api"
+import { editNews, getNewsById, fetchDashboardData } from "../../utils/api"
 import "../../style/newsAdmin.css"
 import NewsCategory from "./NewsCategory"
 import { FaImage, FaVideo, FaTrash, FaSave, FaArrowLeft, FaEye } from "react-icons/fa"
+
+// YouTube URL'sini embed formatına çeviren yardımcı fonksiyon
+const getYouTubeEmbedUrl = (url) => {
+  if (!url) return ""
+  const regExp =
+    /(?:https?:\/\/)?(?:www\.)?(?:m\.)?(?:youtube\.com|youtu\.be)\/(?:watch\?v=|embed\/|v\/|)([\w-]{11})(?:\S+)?/
+  const match = url.match(regExp)
+  if (match && match[1]) {
+    return `https://www.youtube.com/embed/${match[1]}?autoplay=1` // Autoplay eklendi
+  }
+  return ""
+}
 
 function EditNews() {
   const [haber, setHaber] = useState({
     baslik: "",
     ozet: "",
     icerik: "",
-    resim: [],
-    video: [],
+    resim: [], // Yeni yüklenecek resim dosyaları için
+    resimLink: "", // Yeni eklenecek resim URL'si için
+    video: "", // video artık bir string (URL) olacak
     kategoriler: [],
     yazar: "",
     durum: "aktif",
@@ -22,10 +35,10 @@ function EditNews() {
   })
 
   // Mevcut medya dosyalarını takip etmek için state'ler
-  const [mevcutResimler, setMevcutResimler] = useState([])
-  const [mevcutVideolar, setMevcutVideolar] = useState([])
-  const [silinecekResimler, setSilinecekResimler] = useState([])
-  const [silinecekVideolar, setSilinecekVideolar] = useState([])
+  const [mevcutResimler, setMevcutResimler] = useState([]) // Hem yerel yollar hem de harici URL'ler
+  const [mevcutVideolar, setMevcutVideolar] = useState([]) // YouTube URL'lerini tutacak
+  const [silinecekResimler, setSilinecekResimler] = useState([]) // Silinecek resim yolları/URL'leri
+  const [silinecekVideolar, setSilinecekVideolar] = useState([]) // Silinecek YouTube URL'lerini tutacak
   const [activePreview, setActivePreview] = useState(null)
 
   const location = useLocation()
@@ -42,16 +55,15 @@ function EditNews() {
     try {
       const data = await fetchDashboardData()
       if (!data) {
-        setError("Oturum yok")
+        setErrorMessage("Oturum yok") // setError yerine setErrorMessage kullanıldı
       }
     } catch (err) {
-      setError("Giriş token'ı bulunamadı. Lütfen tekrar giriş yapın.")
+      setErrorMessage("Giriş token'ı bulunamadı. Lütfen tekrar giriş yapın.")
       setLoading(false)
     }
   }
 
-
-const fetchNewsById =async(newsId)=> {
+  const fetchNewsById = async (newsId) => {
     setLoading(true)
     try {
       const result = await getNewsById(newsId)
@@ -76,7 +88,7 @@ const fetchNewsById =async(newsId)=> {
           })
         }
 
-        // Resim ve video linklerini işle
+        // Resim linklerini işle (hem yerel yollar hem de harici URL'ler olabilir)
         let resimLinkleri = []
         if (Array.isArray(newsData.resim_link)) {
           resimLinkleri = newsData.resim_link.filter((link) => link !== null && link !== undefined)
@@ -84,6 +96,7 @@ const fetchNewsById =async(newsId)=> {
           resimLinkleri = [newsData.resim_link]
         }
 
+        // Video linklerini işle (artık doğrudan URL'ler)
         let videoLinkleri = []
         if (Array.isArray(newsData.video_link)) {
           videoLinkleri = newsData.video_link.filter((link) => link !== null && link !== undefined)
@@ -101,8 +114,9 @@ const fetchNewsById =async(newsId)=> {
           baslik: newsData.baslik || "",
           ozet: newsData.ozet || "",
           icerik: newsData.haber_metni || "",
-          resim: [], // Yeni resimler için boş dizi
-          video: [], // Yeni videolar için boş dizi
+          resim: [], // Yeni resim dosyaları için boş dizi
+          resimLink: "", // Yeni resim linki için boş string
+          video: "", // Yeni video linki için boş string
           kategoriler: kategoriler,
           yazar: newsData.yazar_id || "",
           durum: newsData.durum || "aktif",
@@ -175,7 +189,7 @@ const fetchNewsById =async(newsId)=> {
     const { name, value, files } = e.target
     setHaber((prev) => ({
       ...prev,
-      [name]: files ? Array.from(files) : value,
+      [name]: name === "resim" ? Array.from(files) : value, // resim için dosyaları, diğerleri için değeri al
     }))
   }
 
@@ -197,6 +211,10 @@ const fetchNewsById =async(newsId)=> {
 
   const getFileNameFromUrl = (url) => {
     if (!url) return "Dosya"
+    // YouTube URL'leri için farklı bir isim döndürebiliriz
+    if (getYouTubeEmbedUrl(url)) return "YouTube Video"
+    // Harici resim URL'leri için "Harici Resim" döndürebiliriz
+    if (url.startsWith("http://") || url.startsWith("https://")) return "Harici Resim"
     const parts = url.split("/")
     return parts[parts.length - 1]
   }
@@ -204,8 +222,15 @@ const fetchNewsById =async(newsId)=> {
   // URL'yi tam formata çeviren yardımcı fonksiyon
   const getFullUrl = (url) => {
     if (!url) return "/placeholder.svg?height=200&width=350"
-    if (url.startsWith("http://") || url.startsWith("https://")) return url
-    if (url.startsWith("/uploads/")) return `http://localhost:5000${url}`
+    if (url.startsWith("http://") || url.startsWith("https://")) {
+      // Eğer bir YouTube URL'si ise embed URL'sini döndür
+      const youtubeEmbedUrl = getYouTubeEmbedUrl(url)
+      if (youtubeEmbedUrl) {
+        return youtubeEmbedUrl
+      }
+      return url // Diğer harici URL'ler için doğrudan linki döndür
+    }
+    if (url.startsWith("/uploads/")) return `http://localhost:5000${url}` // Yerel yüklemeler için
     return url
   }
 
@@ -240,23 +265,21 @@ const fetchNewsById =async(newsId)=> {
         })
       }
 
-      // Mevcut resimleri ekle - ÖNEMLİ: Bunlar her zaman gönderilmeli
+      // Mevcut resimleri ekle (silinmeyecek olanlar)
       if (mevcutResimler && mevcutResimler.length > 0) {
         mevcutResimler.forEach((resim) => {
           formData.append("existingImages", resim)
         })
       } else {
-        // Eğer mevcut resim yoksa, boş bir değer gönder ki backend null olarak algılamasın
         formData.append("existingImages", "")
       }
 
-      // Mevcut videoları ekle - ÖNEMLİ: Bunlar her zaman gönderilmeli
+      // Mevcut videoları ekle (Artık URL'ler)
       if (mevcutVideolar && mevcutVideolar.length > 0) {
         mevcutVideolar.forEach((video) => {
           formData.append("existingVideos", video)
         })
       } else {
-        // Eğer mevcut video yoksa, boş bir değer gönder ki backend null olarak algılamasın
         formData.append("existingVideos", "")
       }
 
@@ -267,25 +290,28 @@ const fetchNewsById =async(newsId)=> {
         })
       }
 
-      // Silinecek videoları ekle
+      // Silinecek videoları ekle (Artık URL'ler)
       if (silinecekVideolar && silinecekVideolar.length > 0) {
         silinecekVideolar.forEach((video) => {
           formData.append("deleteVideos", video)
         })
       }
 
-      // Yeni resimleri ekle
+      // Yeni resim dosyalarını ekle
       if (haber.resim && haber.resim.length > 0) {
         for (let i = 0; i < haber.resim.length; i++) {
           formData.append("images", haber.resim[i])
         }
       }
 
-      // Yeni videoları ekle
-      if (haber.video && haber.video.length > 0) {
-        for (let i = 0; i < haber.video.length; i++) {
-          formData.append("videos", haber.video[i])
-        }
+      // Yeni resim linkini ekle
+      if (haber.resimLink) {
+        formData.append("imageLinks", haber.resimLink)
+      }
+
+      // Yeni video linkini ekle (tek bir string)
+      if (haber.video) {
+        formData.append("videoLink", haber.video)
       }
 
       console.log("Düzenlenen Haber Verileri:")
@@ -423,13 +449,15 @@ const fetchNewsById =async(newsId)=> {
 
                   {/* Yeni resim yükleme */}
                   <Form.Control type="file" name="resim" onChange={handleChange} accept="image/*" multiple />
-                  <Form.Text className="text-muted">Birden fazla resim seçebilirsiniz. (Maksimum 2 adet)</Form.Text>
+                  <Form.Text className="text-muted">
+                    Birden fazla resim dosyası seçebilirsiniz. (Maksimum 2 adet)
+                  </Form.Text>
 
-                  {/* Yeni seçilen resimler */}
+                  {/* Yeni seçilen resim dosyaları */}
                   {haber.resim.length > 0 && (
                     <div className="mt-2">
                       <Badge bg="info" className="mb-2">
-                        Yeni Seçilen Resimler: {haber.resim.length}
+                        Yeni Seçilen Resim Dosyaları: {haber.resim.length}
                       </Badge>
                       <ListGroup>
                         {Array.from(haber.resim).map((file, index) => (
@@ -440,6 +468,28 @@ const fetchNewsById =async(newsId)=> {
                       </ListGroup>
                     </div>
                   )}
+
+                  <Form.Label className="mt-3">Resim Linki</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="resimLink"
+                    value={haber.resimLink}
+                    onChange={handleChange}
+                    placeholder="Resim URL'sini buraya yapıştırın"
+                  />
+                  <Form.Text className="text-muted">Harici bir resim URL'si ekleyebilirsiniz.</Form.Text>
+
+                  {/* Yeni seçilen resim linki */}
+                  {haber.resimLink && (
+                    <div className="mt-2">
+                      <Badge bg="info" className="mb-2">
+                        Yeni Seçilen Resim Linki
+                      </Badge>
+                      <ListGroup>
+                        <ListGroup.Item className="small">{haber.resimLink}</ListGroup.Item>
+                      </ListGroup>
+                    </div>
+                  )}
                 </Form.Group>
               </Col>
 
@@ -447,7 +497,7 @@ const fetchNewsById =async(newsId)=> {
                 <Form.Group className="mb-3">
                   <Form.Label>
                     <FaVideo className="me-2" />
-                    Videolar
+                    Video Linki (YouTube)
                   </Form.Label>
 
                   {/* Mevcut videolar */}
@@ -483,15 +533,29 @@ const fetchNewsById =async(newsId)=> {
                                     </div>
                                   </div>
                                   <div className="video-preview-container">
-                                    <video
-                                      controls
-                                      width="100%"
-                                      height="120"
-                                      src={getFullUrl(video)}
-                                      className="border rounded"
-                                    >
-                                      Tarayıcınız video etiketini desteklemiyor.
-                                    </video>
+                                    {/* YouTube videosu için iframe kullan */}
+                                    {getYouTubeEmbedUrl(video) ? (
+                                      <iframe
+                                        width="100%"
+                                        height="120"
+                                        src={getYouTubeEmbedUrl(video)}
+                                        frameBorder="0"
+                                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                                        allowFullScreen
+                                        title={`YouTube video ${index + 1}`}
+                                        className="border rounded"
+                                      ></iframe>
+                                    ) : (
+                                      <video
+                                        controls
+                                        width="100%"
+                                        height="120"
+                                        src={getFullUrl(video)} // Eski yerel videolar için hala geçerli olabilir
+                                        className="border rounded"
+                                      >
+                                        Tarayıcınız video etiketini desteklemiyor.
+                                      </video>
+                                    )}
                                   </div>
                                 </Card.Body>
                               </Card>
@@ -502,22 +566,24 @@ const fetchNewsById =async(newsId)=> {
                     </Card>
                   )}
 
-                  {/* Yeni video yükleme */}
-                  <Form.Control type="file" name="video" onChange={handleChange} accept="video/*" multiple />
-                  <Form.Text className="text-muted">Birden fazla video seçebilirsiniz. (Maksimum 1 adet)</Form.Text>
+                  {/* Yeni video linki girişi */}
+                  <Form.Control
+                    type="text" // type="file" yerine type="text"
+                    name="video"
+                    value={haber.video}
+                    onChange={handleChange}
+                    placeholder="YouTube video linkini buraya yapıştırın" // Placeholder eklendi
+                  />
+                  <Form.Text className="text-muted">Sadece bir YouTube video linki ekleyebilirsiniz.</Form.Text>
 
-                  {/* Yeni seçilen videolar */}
-                  {haber.video.length > 0 && (
+                  {/* Yeni seçilen videolar (artık sadece tek bir link) */}
+                  {haber.video && ( // haber.video bir string olduğu için varlık kontrolü
                     <div className="mt-2">
                       <Badge bg="info" className="mb-2">
-                        Yeni Seçilen Videolar: {haber.video.length}
+                        Yeni Seçilen Video: 1
                       </Badge>
                       <ListGroup>
-                        {Array.from(haber.video).map((file, index) => (
-                          <ListGroup.Item key={index} className="small">
-                            {file.name}
-                          </ListGroup.Item>
-                        ))}
+                        <ListGroup.Item className="small">{haber.video}</ListGroup.Item>
                       </ListGroup>
                     </div>
                   )}
@@ -618,6 +684,18 @@ const fetchNewsById =async(newsId)=> {
                 alt="Resim Önizleme"
                 style={{ maxWidth: "100%", maxHeight: "80vh", objectFit: "contain" }}
               />
+            ) : // Video önizleme için iframe kullan
+            getYouTubeEmbedUrl(activePreview.url) ? (
+              <iframe
+                width="800" // Genişliği artırıldı
+                height="450" // Yüksekliği artırıldı (16:9 oranı)
+                src={getYouTubeEmbedUrl(activePreview.url)}
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+                title="Video Önizleme"
+                className="border rounded"
+              ></iframe>
             ) : (
               <video controls autoPlay style={{ maxWidth: "100%", maxHeight: "80vh" }} src={activePreview.url}>
                 Tarayıcınız video etiketini desteklemiyor.

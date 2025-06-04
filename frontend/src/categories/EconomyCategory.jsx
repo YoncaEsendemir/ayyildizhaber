@@ -78,7 +78,7 @@ function EconomyCategory() {
               </div>
 
               <div className="category-section">
-                <h2 className="category-title">Başlik</h2>
+
                 <FirstGroup items={group3} />
               </div>
             </Col>

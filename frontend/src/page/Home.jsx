@@ -10,6 +10,7 @@ import FirstGroup from "../components/FirstGroup"
 import SecondGroup from "../components/SecondGroup"
 import ThirdGroup from "../components/ThirdGroup"
 import { fetchNewsHelper, categorizeNews } from "../utils/fetchNewsDataHelper"
+import { Helmet } from 'react-helmet-async';
 import "bootstrap/dist/css/bootstrap.min.css"
 
 function HomePage() {
@@ -29,6 +30,7 @@ function HomePage() {
       // asenkron olduğu için doğrudan newsData'yı kullanamayız
     })
   }, [])
+
 
   // newsData değiştiğinde kategorilere ayır
   useEffect(() => {
@@ -63,14 +65,30 @@ function HomePage() {
   }
 
   // Önemli kategorileri önce göster
-  const priorityCategories = ["Gündem", "Ekonomi", "Spor", "Dünya", "Sağlık", "Teknoloji"]
+  /*
+  const priorityCategories = ["Gündem", "Ekonomi", "Spor", "Dünya", "Sağlık", "Teknoloji", "Özel-haber","Türkiye","Savunma"]
   const sortedCategories = [
     ...priorityCategories.filter((cat) => categories.includes(cat)),
     ...categories.filter((cat) => !priorityCategories.includes(cat)),
-  ]
+  ]*/
+   // Veriyi gruplara böl
+   const groupSize = Math.ceil(newsData.length / 4);
+   const group1 = newsData.slice(0, groupSize);
+   const group2 = newsData.slice(groupSize, groupSize * 2);
+   const group3 = newsData.slice(groupSize * 2, groupSize * 3);
+   const group4 = newsData.slice(groupSize * 3);
 
   return (
     <Container>
+
+      {/* Helmet bileşenini buraya ekleyin */}
+      <Helmet>
+        <title>Ayyıldız Haber - En Güncel Haberler</title>
+        <meta name="description" content="Ayyıldız Haber ile en son dakika haberleri, gündem, ekonomi, spor ve dünya haberlerini takip edin." />
+        <meta name="keywords" content="haber, son dakika, gündem, ekonomi, spor, dünya, ayyıldız haber" />
+        <link rel="canonical" href="https://www.ayyildizhaber.com/" /> {/* Gerçek URL'nizi buraya yazın */}
+        {/* Diğer meta etiketleri, linkler vb. buraya eklenebilir */}
+      </Helmet>
       {/* Debug bilgileri */}
       <div className="debug-info" style={{ display: "none" }}>
         <p>TRT Haberler: {trtNews.length}</p>
@@ -91,34 +109,23 @@ function HomePage() {
       </div>
 
       {/* İlk 6 haberi CardGridLayout'da göster */}
-      <CardGridLayout items={newsData.slice(0, 6)} />
+      <CardGridLayout items={group1} />
 
       {/* Kategorilere göre haberler */}
       <section className="news-categories">
         <Container fluid>
           <Row>
             <Col lg={12}>
-              {sortedCategories.map((category, index) => {
-                // Kategorideki haber sayısını kontrol et
-                if (!categorizedNews[category] || categorizedNews[category].length === 0) {
-                  return null
-                }
-
-                return (
-                  <div key={category} className="category-section mb-5">
-                    <h2 className="category-title border-bottom pb-2 mb-4">
-                      {category.toUpperCase()} ({categorizedNews[category].length})
-                    </h2>
-                    {index % 3 === 0 ? (
-                      <FirstGroup items={categorizedNews[category].slice(0, 6)} />
-                    ) : index % 3 === 1 ? (
-                      <SecondGroup items={categorizedNews[category].slice(0, 6)} />
-                    ) : (
-                      <ThirdGroup items={categorizedNews[category].slice(0, 6)} />
-                    )}
+               
+                  <div className="category-section mb-5">
+                  
+                      <FirstGroup items={group2} />
+                 
+                      <SecondGroup items={group3} />
+                    
+                      <ThirdGroup items={group4} />
+                 
                   </div>
-                )
-              })}
             </Col>
           </Row>
         </Container>

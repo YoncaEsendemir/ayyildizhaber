@@ -2,18 +2,20 @@
 
 // NewsCreate.jsx
 import { useState, useRef, useEffect } from "react"
-import { Form, Button, Container, Row, Col, Card } from "react-bootstrap"
+import { Form, Button, Container, Row, Col, Card, ListGroup, Badge } from "react-bootstrap" // ListGroup ve Badge eklendi
 import "../../style/newsAdmin.css"
-import { addNews,fetchDashboardData } from "../../utils/api"
+import { addNews, fetchDashboardData } from "../../utils/api"
 import NewsCategory from "./NewsCategory"
+import { FaImage, FaVideo } from "react-icons/fa" // İkonlar eklendi
 
 function NewsCreate() {
   const [haber, setHaber] = useState({
     baslik: "",
     ozet: "",
     icerik: "",
-    resim: null,
-    video: null,
+    resim: [], // Yüklenen resim dosyaları için
+    resimLink: "", // Resim URL'si için
+    video: "", // video artık bir string (URL) olacak
     kategoriler: [],
     yazar: "",
     durum: "aktif",
@@ -24,13 +26,18 @@ function NewsCreate() {
   const [successMessage, setSuccessMessage] = useState("")
   const [errorMessage, setErrorMessage] = useState("")
 
-
   const editorRef = useRef(null)
 
   useEffect(() => {
     fetchSession()
 
-    if (editorRef.current) {
+    if (editorRef.current && window.CKEDITOR) {
+      // CKEDITOR'ün varlığını kontrol et
+      // Önce varsa mevcut instance'ı temizle
+      if (window.CKEDITOR.instances.icerik) {
+        window.CKEDITOR.instances.icerik.destroy()
+      }
+
       window.CKEDITOR.replace("icerik", {
         height: 200,
         toolbar: [
@@ -48,7 +55,8 @@ function NewsCreate() {
     }
 
     return () => {
-      if (window.CKEDITOR.instances.icerik) {
+      if (window.CKEDITOR && window.CKEDITOR.instances.icerik) {
+        // CKEDITOR'ün varlığını kontrol et
         window.CKEDITOR.instances.icerik.destroy()
       }
     }
@@ -56,7 +64,7 @@ function NewsCreate() {
 
   const fetchSession = async () => {
     try {
-      const data = await fetchDashboardData ()
+      const data = await fetchDashboardData()
       if (!data) {
         setErrorMessage("Oturum yok")
       }
@@ -66,12 +74,11 @@ function NewsCreate() {
     }
   }
 
-
   const handleChange = (e) => {
     const { name, value, files } = e.target
     setHaber((prev) => ({
       ...prev,
-      [name]: files ? Array.from(files) : value, // çoklu dosyalar için
+      [name]: name === "resim" ? Array.from(files) : value, // resim için dosyaları, diğerleri için değeri al
     }))
   }
 
@@ -89,7 +96,7 @@ function NewsCreate() {
       console.log("Gönderilen Haber:", haber)
 
       // Backend'e gönder
-      const response = await addNews(haber)
+      const response = await addNews(haber) // addNews fonksiyonu api.jsx'te güncellendi
 
       console.log("Sunucu yanıtı:", response)
       setSuccessMessage("Haber başarıyla eklendi!")
@@ -99,8 +106,9 @@ function NewsCreate() {
         baslik: "",
         ozet: "",
         icerik: "",
-        resim: null,
-        video: null,
+        resim: [], // resim dosyalarını sıfırla
+        resimLink: "", // resim linkini sıfırla
+        video: "", // video alanını sıfırla
         kategoriler: [],
         yazar: "",
         durum: "aktif",
@@ -168,16 +176,70 @@ function NewsCreate() {
             <Row>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Resim</Form.Label>
+                  <Form.Label>
+                    <FaImage className="me-2" />
+                    Resimler
+                  </Form.Label>
                   <Form.Control type="file" name="resim" onChange={handleChange} accept="image/*" multiple />
-                  <Form.Text className="text-muted">Birden fazla resim seçebilirsiniz. (Maksimum 5 adet)</Form.Text>
+                  <Form.Text className="text-muted">
+                    Birden fazla resim dosyası seçebilirsiniz. (Maksimum 5 adet)
+                  </Form.Text>
+
+                  {/* Yeni seçilen resim dosyaları */}
+                  {haber.resim.length > 0 && (
+                    <div className="mt-2">
+                      <Badge bg="info" className="mb-2">
+                        Yeni Seçilen Resim Dosyaları: {haber.resim.length}
+                      </Badge>
+                      <ListGroup>
+                        {Array.from(haber.resim).map((file, index) => (
+                          <ListGroup.Item key={index} className="small">
+                            {file.name}
+                          </ListGroup.Item>
+                        ))}
+                      </ListGroup>
+                    </div>
+                  )}
+
+                  <Form.Label className="mt-3">Resim Linki</Form.Label>
+                  <Form.Control
+                    type="text"
+                    name="resimLink"
+                    value={haber.resimLink}
+                    onChange={handleChange}
+                    placeholder="Resim URL'sini buraya yapıştırın"
+                  />
+                  <Form.Text className="text-muted">Harici bir resim URL'si ekleyebilirsiniz.</Form.Text>
+
+                  {/* Yeni seçilen resim linki */}
+                  {haber.resimLink && (
+                    <div className="mt-2">
+                      <Badge bg="info" className="mb-2">
+                        Yeni Seçilen Resim Linki
+                      </Badge>
+                      <ListGroup>
+                        <ListGroup.Item className="small">{haber.resimLink}</ListGroup.Item>
+                      </ListGroup>
+                    </div>
+                  )}
                 </Form.Group>
               </Col>
               <Col md={6}>
                 <Form.Group className="mb-3">
-                  <Form.Label>Video</Form.Label>
-                  <Form.Control type="file" name="video" onChange={handleChange} accept="video/*" multiple />
-                  <Form.Text className="text-muted">Birden fazla video seçebilirsiniz. (Maksimum 2 adet)</Form.Text>
+                  <Form.Label>
+                    <FaVideo className="me-2" />
+                    Video Linki (YouTube)
+                  </Form.Label>{" "}
+                  {/* Label güncellendi */}
+                  <Form.Control
+                    type="text" // type="file" yerine type="text"
+                    name="video"
+                    value={haber.video}
+                    onChange={handleChange}
+                    placeholder="YouTube video linkini buraya yapıştırın" // Placeholder eklendi
+                  ></Form.Control>
+                  <Form.Text className="text-muted">Sadece bir YouTube video linki ekleyebilirsiniz.</Form.Text>{" "}
+                  {/* Yardım metni güncellendi */}
                 </Form.Group>
               </Col>
             </Row>

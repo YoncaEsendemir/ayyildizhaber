@@ -4,14 +4,14 @@ const API_BASE_URL = "http://localhost:5000/api"
 
 // Header'ı döndüren yardımcı fonksiyon
 export const getAuthHeader = () => {
-  const token = localStorage.getItem("authToken");
+  const token = localStorage.getItem("authToken")
   if (!token) {
-    throw new Error("Giriş token'ı bulunamadı. Lütfen tekrar giriş yapın.");
+    throw new Error("Giriş token'ı bulunamadı. Lütfen tekrar giriş yapın.")
   }
   return {
     Authorization: `Bearer ${token}`,
-  };
-};
+  }
+}
 
 export const fetchWeatherData = async () => {
   try {
@@ -82,13 +82,13 @@ export const fetchNews2 = async (category) => {
     throw error
   }
 }
-
+// DÖVİZ API'LERİ - Basit cache sistemi ile
 export const fetchCurrencyGold = async () => {
   try {
     const response = await axios.get(`${API_BASE_URL}/currency/gold`)
     return response.data
   } catch (error) {
-    console.error(`Error fetching gold currency data:`, error)
+    console.error("Error fetching gold currency data:", error)
     throw error
   }
 }
@@ -98,7 +98,7 @@ export const fetchCurrencyCrypto = async () => {
     const response = await axios.get(`${API_BASE_URL}/currency/crypto`)
     return response.data
   } catch (error) {
-    console.error(`Error fetching crypto currency data:`, error)
+    console.error("Error fetching crypto currency data:", error)
     throw error
   }
 }
@@ -108,7 +108,17 @@ export const fetchCurrencyMoney = async () => {
     const response = await axios.get(`${API_BASE_URL}/currency/money`)
     return response.data
   } catch (error) {
-    console.error(`Error fetching money currency data:`, error)
+    console.error("Error fetching money currency data:", error)
+    throw error
+  }
+}
+
+export const fetchCurrencyHistory = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/currency/history`)
+    return response.data
+  } catch (error) {
+    console.error("Error fetching currency history data:", error)
     throw error
   }
 }
@@ -152,15 +162,6 @@ export const getManuelHaber = async () => {
   }
 }
 */
-export const fetchCurrencyHistory = async () => {
-  try {
-    const response = await axios.get(`${API_BASE_URL}/currency/history`)
-    return response.data
-  } catch (error) {
-    console.error(`Error fetching currency history data:`, error)
-    throw error
-  }
-}
 
 export const authAdmin = async (email, password) => {
   try {
@@ -182,6 +183,28 @@ export const authAdmin = async (email, password) => {
   }
 }
 
+//register
+
+export const registerAdmin = async (name, email, password) => {
+  try {
+    const response = await axios.post(
+      `${API_BASE_URL}/auth/register`,
+      {
+        name,
+        email,
+        password,
+      },
+      {
+        // axios.defaults.wi
+        withCredentials: true, //Çerez alabilmek için
+      },
+    )
+    return response.data
+  } catch (error) {
+    console.error("Error registering admin:", error)
+    throw error
+  }
+}
 
 // Dashboard verilerini getiren fonksiyon
 export const fetchDashboardData = async () => {
@@ -234,6 +257,18 @@ export const getAllCategories = async () => {
   }
 }
 
+// kategori sayisi habere göre
+export const getCategoriesCout = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/adminNews/kategorilerHaberSayisi`)
+    return response.data
+  } catch (err) {
+    console.error("Kategori Sayısı Hatası", err.response?.data?.message || err.message)
+    throw new Error(err.response?.data?.message || "Kategori Sayısı Hatası")
+  }
+}
+
+
 // Kategori güncelleme
 export const updateCategory = async (id, updatedData) => {
   // axios ile PUT isteği atılır
@@ -245,8 +280,6 @@ export const updateCategory = async (id, updatedData) => {
     throw new Error(error.response?.data?.message || "Kategori güncellenemedi")
   }
 }
-
-
 
 //Haber ekleme
 export const addNews = async (newsData) => {
@@ -264,18 +297,20 @@ export const addNews = async (newsData) => {
         formData.append("categoryId", kategori.id)
       })
     }
-    // Resimleri ekle
+    // Resimleri ekle (hem dosyalar hem de linkler)
     if (newsData.resim && newsData.resim.length > 0) {
       for (let i = 0; i < newsData.resim.length; i++) {
-        formData.append("images", newsData.resim[i])
+        formData.append("images", newsData.resim[i]) // Dosya yüklemeleri
       }
     }
+    if (newsData.resimLink) {
+      // Resim linki varsa
+      formData.append("imageLinks", newsData.resimLink) // Resim linki
+    }
 
-    // Videoları ekle
-    if (newsData.video && newsData.video.length > 0) {
-      for (let i = 0; i < newsData.video.length; i++) {
-        formData.append("videos", newsData.video[i])
-      }
+    // Videoları ekle (Artık dosya değil, link)
+    if (newsData.video) {
+      formData.append("videoLink", newsData.video) // Yeni alan adı: videoLink
     }
 
     // API isteğini gönder
@@ -287,8 +322,8 @@ export const addNews = async (newsData) => {
 
     return response.data
   } catch (error) {
-    console.error("Kategori ekleme hatası:", error.response?.data?.message || error.message)
-    throw new Error(error.response?.data?.message || "Kategori eklenemedi")
+    console.error("Haber ekleme hatası:", error.response?.data?.message || error.message)
+    throw new Error(error.response?.data?.message || "Haber eklenemedi")
   }
 }
 
@@ -330,7 +365,7 @@ export const getAllNews = async () => {
         return "/placeholder.svg?height=200&width=350"
       })
 
-      // Video linklerini işler
+      // Video linklerini işler (Artık yerel dosya değil, doğrudan URL olabilir)
       const videoLinkleri = Array.isArray(haber.video_link)
         ? haber.video_link
         : typeof haber.video_link === "string"
@@ -339,7 +374,9 @@ export const getAllNews = async () => {
 
       const tamVideoLinkleri = videoLinkleri.map((link) => {
         if (link && typeof link === "string") {
+          // YouTube veya diğer harici URL'ler için doğrudan linki döndür
           if (link.startsWith("http://") || link.startsWith("https://")) return link
+          // Eski yerel yüklemeler için prefix ekle
           if (link.startsWith("/uploads/")) return `http://localhost:5000${link}`
           return link
         }
@@ -393,7 +430,7 @@ export const getNewsById = async (newsId) => {
         return "/placeholder.svg?height=200&width=350"
       })
 
-      // Video linklerini işler
+      // Video linklerini işler (Artık yerel dosya değil, doğrudan URL olabilir)
       const videoLinkleri = Array.isArray(haber.video_link)
         ? haber.video_link
         : typeof haber.video_link === "string"
@@ -402,7 +439,9 @@ export const getNewsById = async (newsId) => {
 
       const tamVideoLinkleri = videoLinkleri.map((link) => {
         if (link && typeof link === "string") {
+          // YouTube veya diğer harici URL'ler için doğrudan linki döndür
           if (link.startsWith("http://") || link.startsWith("https://")) return link
+          // Eski yerel yüklemeler için prefix ekle
           if (link.startsWith("/uploads/")) return `http://localhost:5000${link}`
           return link
         }
@@ -502,34 +541,32 @@ export const editNews = async (formData, newsId) => {
   }
 }
 
-export const getTotalNews = async()=>{
- try{
-  const response =await axios.get(`${API_BASE_URL}/adminNews/totalHaber`)
-  return response.data;
+export const getTotalNews = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/adminNews/totalHaber`)
+    return response.data
   } catch (error) {
     console.error("Haber sayisi listeleme hatası:", error.response?.data?.message || error.message)
-    throw new Error(error.response?.data?.message || "Haber Sayısı Listeleme hatası");
+    throw new Error(error.response?.data?.message || "Haber Sayısı Listeleme hatası")
   }
 }
 
 //Toplam kategori seç
-export const getTotalCategoryNews = async()=>{
-  try{
-     const response = await axios.get(`${API_BASE_URL}/adminNews/haberkategoriTotal`);
-     return response.data;
-  }
-  catch(error){
+export const getTotalCategoryNews = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/adminNews/haberkategoriTotal`)
+    return response.data
+  } catch (error) {
     console.error("Haber kategori sayisi listeleme hatası:", error.response?.data?.message || error.message)
     throw new Error(error.response?.data?.message || "Haber Kategori Sayısı hatası")
   }
 }
 
-export const getLastFiveNews = async()=>{
-  try{
-    const response = await axios.get(`${API_BASE_URL}/adminNews/sonBeshaberler`);
-    return response.data;
-  }
-  catch(error){
+export const getLastFiveNews = async () => {
+  try {
+    const response = await axios.get(`${API_BASE_URL}/adminNews/sonBeshaberler`)
+    return response.data
+  } catch (error) {
     console.error("Son 5 Haber çekerken hata oluştu")
     throw new Error(error.response?.data?.message || "Son 5 haber çekerken hata oluştu ")
   }

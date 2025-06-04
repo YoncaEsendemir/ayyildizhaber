@@ -9,14 +9,6 @@ export const fetchNewsHelperCategory = async (category, setLoading, setNewsData,
     let myNewsData = []
 
     try {
-      // Kategori parametresini kullanarak TRT haberlerini getir
-      trtNewsData = await fetchNews2(category)
-      console.log("TRT haberler:", trtNewsData)
-    } catch (trtError) {
-      console.error("TRT haberler yüklenirken hata:", trtError)
-    }
-
-    try {
       // Kategori parametresini kullanarak kendi haberlerimizi getir
       myNewsData = await getNewsByCategory(category)
       console.log("Manuel haberler (myNews):", myNewsData)
@@ -24,10 +16,18 @@ export const fetchNewsHelperCategory = async (category, setLoading, setNewsData,
       console.error("Manuel haberler yüklenirken hata:", manuelError)
     }
 
+    try {
+      // Kategori parametresini kullanarak TRT haberlerini getir
+      trtNewsData = await fetchNews2(category)
+      console.log("TRT haberler:", trtNewsData)
+    } catch (trtError) {
+      console.error("TRT haberler yüklenirken hata:", trtError)
+    }
+
     const trtArray = Array.isArray(trtNewsData) ? trtNewsData : trtNewsData ? [trtNewsData] : []
     const myNewsArray = Array.isArray(myNewsData) ? myNewsData : myNewsData ? [myNewsData] : []
 
-    const allNews = [...trtArray, ...myNewsArray]
+    const allNews = [...myNewsArray, ...trtArray]
 
     if (allNews.length === 0) {
       setError("Hiç haber bulunamadı.")
@@ -55,23 +55,30 @@ export const fetchNewsHelper = async (setLoading, setNewsData, setError) => {
     let myNewsData = []
 
     try {
-      trtNewsData = await fetchNews2(" ")
-      console.log("TRT haberler:", trtNewsData)
-    } catch (trtError) {
-      console.error("TRT haberler yüklenirken hata:", trtError)
-    }
-
-    try {
       myNewsData = await getAllNews()
+      // Kendi haberlerimize 'myNews' kaynağını ekle
+      myNewsData = myNewsData.map((news) => ({ ...news, source: "myNews" }))
       console.log("Manuel haberler (myNews):", myNewsData)
     } catch (manuelError) {
       console.error("Manuel haberler yüklenirken hata:", manuelError)
     }
 
+    try {
+      trtNewsData = await fetchNews2(" ")
+      // TRT haberlerine 'trt' kaynağını ekle ve kategori ataması yap
+      trtNewsData = trtNewsData.map((news) => ({
+        ...news,
+        source: "trt",
+        kategori: news.kategori || "Genel Haberler", // Kategori yoksa "Genel Haberler" olarak ata
+      }))
+      console.log("TRT haberler:", trtNewsData)
+    } catch (trtError) {
+      console.error("TRT haberler yüklenirken hata:", trtError)
+    }
+
     const trtArray = Array.isArray(trtNewsData) ? trtNewsData : trtNewsData ? [trtNewsData] : []
     const myNewsArray = Array.isArray(myNewsData) ? myNewsData : myNewsData ? [myNewsData] : []
-
-    const allNews = [...trtArray, ...myNewsArray]
+    const allNews = [...myNewsArray, ...trtArray]
 
     if (allNews.length === 0) {
       setError("Hiç haber bulunamadı.")
@@ -97,7 +104,8 @@ export const categorizeNews = (newsData) => {
   const categoryList = []
 
   newsData.forEach((news) => {
-    const category = news.kategori || "Diğer"
+    const category = news.kategori || "Diğer" // Bu satır artık TRT haberleri için "Diğer" atamayacak
+    // çünkü yukarıda varsayılan kategori ataması yapıldı.
 
     if (!categorized[category]) {
       categorized[category] = []
@@ -109,3 +117,4 @@ export const categorizeNews = (newsData) => {
 
   return { categorizedNews: categorized, categories: categoryList }
 }
+

@@ -15,7 +15,7 @@ function Education(){
 
   useEffect(() => {
     // "spor" kategorisindeki haberleri getir
-    fetchNewsHelperCategory("egıtım", setLoading, setNewsData, setError)
+    fetchNewsHelperCategory("egitim", setLoading, setNewsData, setError)
   }, [])
     // Veri yoksa veya yükleniyorsa yükleniyor mesajı göster
     if (loading) {
@@ -75,7 +75,6 @@ function Education(){
               <Col lg={8} md={12} sm={12}>
                 {/* EKONOMİ Section */}
                 <div className="category-section">
-                  <h2 className="category-title">Başlik</h2>
                   <SecondGroup items={group3} />
                 </div>
               </Col>

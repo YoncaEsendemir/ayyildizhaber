@@ -19,7 +19,7 @@ import {
 } from "recharts"
 import { Newspaper, Eye, TrendingUp, Calendar } from "lucide-react"
 import "../../style/dashboard.css"
-import { getTotalCategoryNews, getTotalNews, deleteNewsById, getLastFiveNews,fetchDashboardData  } from "../../utils/api"
+import { getTotalCategoryNews, getTotalNews, deleteNewsById, getLastFiveNews,fetchDashboardData ,getCategoriesCout} from "../../utils/api"
 import { useNavigate } from "react-router-dom"
 
 
@@ -33,7 +33,7 @@ function Dashboard() {
   const navigate = useNavigate()
   const [alert, setAlert] = useState({ show: false, variant: "", message: "" })
   const [loadingAction, setLoadingAction] = useState("")
-
+  const [categoryData, setCategoryData] = useState([])
   const [stats, setStats] = useState({
     totalViews: 0,
     totalUsers: 0,
@@ -49,14 +49,27 @@ function Dashboard() {
     { name: "Cumartesi", views: 2390 },
     { name: "Pazar", views: 3490 },
   ]
-
+/*
   const categoryData = [
     { name: "Gündem", value: 400 },
     { name: "Ekonomi", value: 300 },
     { name: "Spor", value: 300 },
     { name: "Dünya", value: 200 },
     { name: "Teknoloji", value: 100 },
-  ]
+  ]*/
+
+    const fetchCategorisCountHaber= async()=>{
+      try{
+        const response = await getCategoriesCout()
+        if(response && response.data){
+          setCategoryData(response.data)
+        }
+      }
+        catch(err){
+          console.error("Kategoriler çekilirken hata oluştu:", err)
+          setError(err.message || "Kategoriler çekilemedi")
+        }
+    }
   const fetchTotalNewsCategory = async () => {
     try {
       const response = await getTotalNews()
@@ -109,7 +122,7 @@ function Dashboard() {
         setLoading(false)
       }
     }
-    
+    fetchCategorisCountHaber();
     fetchTotalNewsCategory();
     fetchLastFiveNews();
     fetchAdminData()
@@ -248,27 +261,27 @@ function Dashboard() {
             <div className="card-body">
               <h5 className="card-title">Kategori Dağılımı</h5>
               <ResponsiveContainer width="100%" height={300}>
-                <PieChart>
-                  <Pie
-                    data={categoryData}
-                    cx="50%"
-                    cy="50%"
-                    labelLine={false}
-                    outerRadius={80}
-                    fill="#8884d8"
-                    dataKey="value"
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  >
-                    {categoryData.map((entry, index) => (
-                      <Cell
-                        key={`cell-${index}`}
-                        fill={["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"][index % 5]}
-                      />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
+    <PieChart>
+      <Pie
+        data={categoryData} // Artık dinamik olarak güncellenen state'i kullanıyor
+        cx="50%"
+        cy="50%"
+        labelLine={false}
+        outerRadius={80}
+        fill="#8884d8"
+        dataKey="value"
+        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+      >
+        {categoryData.map((entry, index) => (
+          <Cell
+            key={`cell-${index}`}
+            fill={["#0088FE", "#00C49F", "#FFBB28", "#FF8042", "#8884D8"][index % 5]}
+          />
+        ))}
+      </Pie>
+      <Tooltip />
+    </PieChart>
+  </ResponsiveContainer>
             </div>
           </div>
         </div>
