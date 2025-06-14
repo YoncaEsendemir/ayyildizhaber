@@ -60,7 +60,7 @@ function SecondGroup({ items }) {
                 <img
                   src={
                     typeof news.resim_link === "string" && news.resim_link.startsWith("/")
-                      ? `http://localhost:5000${news.resim_link}`
+                      ? `http://45.147.47.55:5000/api${news.resim_link}`
                       : news.resim_link || "/placeholder.svg"
                   }
                   alt="News thumbnail"

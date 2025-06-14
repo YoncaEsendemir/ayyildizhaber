@@ -55,13 +55,13 @@ const NewsContent = () => {
 
     // MP4 veya local video kontrolü
     try {
-      const urlObj = new URL(videoUrl.startsWith('/') ? `http://localhost:5000${videoUrl}` : videoUrl)
-      if (urlObj.pathname.endsWith('.mp4') || videoUrl.startsWith('http://localhost:5000')) {
+      const urlObj = new URL(videoUrl.startsWith('/') ? `http://45.147.47.55:5000/api${videoUrl}` : videoUrl)
+      if (urlObj.pathname.endsWith('.mp4') || videoUrl.startsWith('http://45.147.47.55:5000/api')) {
         return (
           <video
             className="news-video"
             controls
-            src={videoUrl.startsWith("/") ? `http://localhost:5000${videoUrl}` : videoUrl}
+            src={videoUrl.startsWith("/") ? `http://45.147.47.55:5000/api${videoUrl}` : videoUrl}
           >
             Tarayıcınız video etiketini desteklemiyor.
           </video>

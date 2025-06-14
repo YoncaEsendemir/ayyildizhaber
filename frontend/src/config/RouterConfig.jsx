@@ -40,8 +40,8 @@ function RouterConfig() {
       <Routes>
 
         <Route path="/" element={<Home />} />
-        <Route path="admin/login" element={<Login/>} />
-        <Route path="admin/register" element={<Register/>} />
+        <Route path="/admin/login" element={<Login/>} />
+        <Route path="/admin/register" element={<Register/>} />
         <Route path="/video" element={<VideoCategory />} />
         <Route path="/gundem" element={<AgendaCategory />} />
         <Route path="/ekonomi" element={<EconomyCategory />} />
